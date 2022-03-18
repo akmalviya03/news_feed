@@ -1,7 +1,7 @@
 import 'package:news_feed/networkApis/search_api.dart';
 import 'package:news_feed/constants.dart';
 import '../api_keys.dart';
-import '../newsModels/news_list_model.dart';
+import '../News/newsModels/news_list_model.dart';
 
 class NewsApi {
   Future getCountryNews({String countryName = 'in', int page = 1}) async {

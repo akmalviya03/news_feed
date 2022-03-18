@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'newsModels/articles_model.dart';
+import '../newsModels/articles_model.dart';
 
 class DetailsPage extends StatelessWidget {
   const DetailsPage({Key? key, required this.article}) : super(key: key);

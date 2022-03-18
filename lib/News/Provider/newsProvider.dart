@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:news_feed/newsModels/articles_model.dart';
+import 'package:news_feed/News/newsModels/articles_model.dart';
 
 class NewsProvider with ChangeNotifier {
   late int? _totalArticles;
