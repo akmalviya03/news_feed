@@ -42,7 +42,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String val = countries[0];
+
   Future showCustomBottomSheet({required Widget childList}) {
     return showModalBottomSheet(
         context: context,
@@ -60,21 +60,52 @@ class _HomePageState extends State<HomePage> {
           );
         });
   }
-
+  String val = countries[0];
   final NewsApi _newsApi = NewsApi();
   String dropdownValue = 'Newest';
   late Future _future;
-
+  late ScrollController _controller;
+  late NewsListModel newsListModel;
   Future getNews() async {
-    NewsListModel newsListModel = await _newsApi.getCountryNews();
-    Provider.of<NewsProvider>(context,listen: false).initializeArticlesList(newsListModel.articles);
+    newsListModel = await _newsApi.getCountryNews();
+    Provider.of<NewsProvider>(context, listen: false)
+        .initializeArticlesList(newsListModel.articles);
+    Provider.of<NewsProvider>(context, listen: false)
+        .setTotalArticles(newsListModel.totalResults);
+
     return 'Done';
+  }
+
+  Future loadMoreNews() async {
+    if (((Provider.of<NewsProvider>(context, listen: false).totalArticles)! >
+            (Provider.of<NewsProvider>(context, listen: false)
+                .totalArticlesInList)) &&
+        Provider.of<NewsProvider>(context, listen: false).fetchMore != true) {
+      Provider.of<NewsProvider>(context, listen: false).fetching();
+
+      newsListModel = await _newsApi.getCountryNews(
+          page: Provider.of<NewsProvider>(context, listen: false).currentPage);
+
+      Provider.of<NewsProvider>(context, listen: false)
+          .addMoreArticlesToList(newsListModel.articles);
+
+      Provider.of<NewsProvider>(context, listen: false).fetchingDone();
+    }
+    return 'Done';
+  }
+
+  void _scrollListener() {
+    if (_controller.position.extentAfter == 0 &&
+        Provider.of<NewsProvider>(context, listen: false).fetchMore != true) {
+      loadMoreNews();
+    }
   }
 
   @override
   void initState() {
     super.initState();
     _future = getNews();
+    _controller = ScrollController()..addListener(_scrollListener);
   }
 
   @override
@@ -234,7 +265,21 @@ class _HomePageState extends State<HomePage> {
                         return const Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasData &&
                           snapshot.connectionState == ConnectionState.done) {
-                        return const NewsList();
+                        return Column(
+                          children: [
+                            Expanded(
+                                child: NewsList(
+                              controller: _controller,
+                            )),
+                            Consumer<NewsProvider>(
+                              builder: (context, newsProvider, child) {
+                                return Visibility(
+                                    visible: newsProvider.fetchMore,
+                                    child: const CircularProgressIndicator());
+                              },
+                            )
+                          ],
+                        );
                       } else {
                         return Text(snapshot.data.toString());
                       }
