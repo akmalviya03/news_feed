@@ -1,5 +1,5 @@
 import 'package:news_feed/networkApis/search_api.dart';
-import 'package:news_feed/Constants.dart';
+import 'package:news_feed/constants.dart';
 import '../api_keys.dart';
 import '../newsModels/news_list_model.dart';
 

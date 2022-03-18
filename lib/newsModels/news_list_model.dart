@@ -20,13 +20,14 @@ class NewsListModel {
 
   NewsListModel.fromJson(dynamic json) {
     _status = json['status'];
+    if(status != 'error'){
     _totalResults = json['totalResults'];
     if (json['articles'] != null) {
       _articles = [];
       json['articles'].forEach((v) {
         _articles?.add(Articles.fromJson(v));
       });
-    }
+    }}
   }
 
   Map<String, dynamic> toJson() {

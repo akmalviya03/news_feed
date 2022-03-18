@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 
-class CustomBottomSheet extends StatefulWidget {
+class CustomBottomSheet extends StatelessWidget {
   const CustomBottomSheet({
-    Key? key, required this.childWidget,
+    Key? key, required this.childWidget, required this.heading,
   }) : super(key: key);
 
   final Widget childWidget;
+  final String heading;
 
-  @override
-  State<CustomBottomSheet> createState() => _CustomBottomSheetState();
-}
-
-class _CustomBottomSheetState extends State<CustomBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return FractionallySizedBox(
@@ -34,16 +30,16 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 ),
               ),
             ),
-            const Text(
-              'Filter by sources',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+             Text(
+             heading,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const Divider(
               thickness: 2,
               height: 16,
             ),
             Expanded(
-              child: widget.childWidget,
+              child: childWidget,
             )
           ],
         ),
