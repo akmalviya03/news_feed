@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'details_page.dart';
 import 'newsModels/articles_model.dart';
 
@@ -56,7 +55,7 @@ class NewsCard extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          article.publishedAt ?? 'Error',
+                          article.publishedAt ?? 'Error While fetching date',
                           style: const TextStyle(
                             fontSize: 12,
                           ),
@@ -67,13 +66,16 @@ class NewsCard extends StatelessWidget {
                   const SizedBox(
                     width: 8,
                   ),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      article.urlToImage ?? 'https://www.drodd.com/images14/black7.jpg',
-                      height: 100,
-                      width: 100,
-                      fit: BoxFit.cover,
+                  Hero(
+                  tag: article.urlToImage ?? 'https://www.drodd.com/images14/black7.jpg',
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        article.urlToImage ?? 'https://www.drodd.com/images14/black7.jpg',
+                        height: 100,
+                        width: 100,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   )
                 ],
