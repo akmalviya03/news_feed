@@ -5,7 +5,7 @@ import 'package:news_feed/customBottomSheet/bottom_sheet_methods.dart';
 import 'package:news_feed/textFieldSearch.dart';
 import 'package:provider/provider.dart';
 import 'Category/Provider/select_category_bottomsheet_ui.dart';
-import 'customBottomSheet/select_location_bottomsheet_ui.dart';
+import 'Location/UI/select_location_bottomsheet_ui.dart';
 import 'constants.dart';
 import 'Location/Provider/location_provider.dart';
 import 'networkApis/news_api.dart';
@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
   void _scrollListener() {
     if (_controller.position.extentAfter == 0 &&
         newsProvider.fetchMore != true) {
-      loadMoreNews(countryName: locationProvider.val!);
+      loadMoreNews(countryName: locationProvider.val!,categoryName: _categoryProvider.selectedCategory);
     }
   }
 
@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pop(context);
                 _future = getNews(
                     countryName: locationProvider.val!,
-                    categoryName: _categoryProvider.selectedCategory!);
+                    categoryName: _categoryProvider.selectedCategory);
               },
               context: context,
               childList:

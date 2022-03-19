@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 class CategoryProvider with ChangeNotifier {
-  String? selectedCategory='';
+  String selectedCategory='';
 
   void setCategory(String newCategory){
     selectedCategory = newCategory;
