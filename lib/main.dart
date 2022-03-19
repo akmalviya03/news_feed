@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:news_feed/Category/Provider/category_provider.dart';
 import 'package:news_feed/Location/Provider/location_provider.dart';
 import 'home_page.dart';
 import 'News/Provider/newsProvider.dart';
@@ -16,6 +17,7 @@ class NewsFeedApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => NewsProvider()),
         ChangeNotifierProvider(create: (_) => LocationProvider()),
+        ChangeNotifierProvider(create: (_) => CategoryProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(

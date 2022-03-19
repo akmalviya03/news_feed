@@ -25,34 +25,35 @@ List<Map<String, String>> countries = [
   },
 ];
 
+
 List<Map<String, dynamic>> categories = [
-  {
-    'category': 'business',
-    'value': true,
-  },
-  {
-    'category': 'entertainment',
-    'value': true,
-  },
-  {
-    'category': 'general',
-    'value': true,
-  },
-  {
-    'category': 'health',
-    'value': true,
-  },
-  {
-    'category': 'science',
-    'value': true,
-  },
-  {
-    'category': 'sports',
-    'value': true,
-  },
+  // {
+  //   'category': 'business',
+  //   'value': false,
+  // },
+  // {
+  //   'category': 'entertainment',
+  //   'value': false,
+  // },
+  // {
+  //   'category': 'general',
+  //   'value': false,
+  // },
+  // {
+  //   'category': 'health',
+  //   'value': false,
+  // },
+  // {
+  //   'category': 'science',
+  //   'value': false,
+  // },
+  // {
+  //   'category': 'sports',
+  //   'value': false,
+  // },
   {
     'category': 'technology',
-    'value': true,
+    'value': false,
   },
 ];
 

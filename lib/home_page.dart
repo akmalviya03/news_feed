@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:news_feed/Category/Provider/category_provider.dart';
 import 'package:news_feed/customBottomSheet/bottom_sheet_methods.dart';
 import 'package:news_feed/textFieldSearch.dart';
 import 'package:provider/provider.dart';
-import 'customBottomSheet/select_category_bottomsheet_ui.dart';
+import 'Category/Provider/select_category_bottomsheet_ui.dart';
 import 'customBottomSheet/select_location_bottomsheet_ui.dart';
 import 'constants.dart';
-import 'customBottomSheet/custom_bottom_sheet_ui.dart';
 import 'Location/Provider/location_provider.dart';
 import 'networkApis/news_api.dart';
 import 'News/newsModels/news_list_model.dart';
@@ -27,26 +27,33 @@ class _HomePageState extends State<HomePage> {
   late ScrollController _controller;
   late NewsListModel newsListModel;
 
-  late final locationProvider;
-  late final newsProvider;
+  late final LocationProvider locationProvider;
+  late final NewsProvider newsProvider;
+  late final CategoryProvider _categoryProvider;
 
   final BottomSheetMethods _bottomSheetMethods = BottomSheetMethods();
-  final SelectLocationBottomSheetUI _selectLocationBottomSheetUI = SelectLocationBottomSheetUI();
-  final SelectCategoryBottomSheetUI _selectCategoryBottomSheetUI = SelectCategoryBottomSheetUI();
+  final SelectLocationBottomSheetUI _selectLocationBottomSheetUI =
+      SelectLocationBottomSheetUI();
+  final SelectCategoryBottomSheetUI _selectCategoryBottomSheetUI =
+      SelectCategoryBottomSheetUI();
 
-  Future getNews({String countryName = 'in'}) async {
-    newsListModel = await _newsApi.getCountryNews(countryName: countryName);
+  Future getNews({String countryName = 'in', String categoryName = ""}) async {
+    newsListModel = await _newsApi.getCountryNews(
+        countryName: countryName, categoryName: categoryName);
     newsProvider.initializeArticlesList(newsListModel.articles);
     newsProvider.setTotalArticles(newsListModel.totalResults);
     return 'Done';
   }
 
-  Future loadMoreNews({String countryName = 'in'}) async {
+  Future loadMoreNews(
+      {String countryName = 'in', String categoryName = ""}) async {
     if (((newsProvider.totalArticles)! > (newsProvider.totalArticlesInList)) &&
         newsProvider.fetchMore != true) {
       newsProvider.fetching();
-      newsListModel =
-          await _newsApi.getCountryNews(page: newsProvider.currentPage);
+      newsListModel = await _newsApi.getCountryNews(
+          page: newsProvider.currentPage,
+          categoryName: categoryName,
+          countryName: countryName);
       newsProvider.addMoreArticlesToList(newsListModel.articles);
       newsProvider.fetchingDone();
     }
@@ -65,7 +72,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     locationProvider = Provider.of<LocationProvider>(context, listen: false);
     newsProvider = Provider.of<NewsProvider>(context, listen: false);
-
+    _categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
     _future = getNews();
     _controller = ScrollController()..addListener(_scrollListener);
   }
@@ -85,19 +92,22 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 _bottomSheetMethods.showCustomBottomSheet(
                     context: context,
-                    childList: _selectLocationBottomSheetUI.showSelectLocationBottomSheet(),
+                    childList: _selectLocationBottomSheetUI
+                        .showSelectLocationBottomSheet(),
                     heading: 'Choose your Location',
                     applyFilter: () {
                       Navigator.pop(context);
                       locationProvider.setCountry(countries[
-                      countries.indexWhere((element) =>
-                      element['val'] == locationProvider.val!)]
-                      ['location']!);
+                              countries.indexWhere((element) =>
+                                  element['val'] == locationProvider.val!)]
+                          ['location']!);
+                      _categoryProvider.resetSelectedCategory();
                       _future = getNews(countryName: locationProvider.val!);
                     });
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal:16,vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   children: [
                     const Icon(
@@ -105,14 +115,20 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.white,
                       size: 14,
                     ),
-                    const SizedBox(width: 8,),
+                    const SizedBox(
+                      width: 8,
+                    ),
                     Consumer<LocationProvider>(
                         builder: (context, locationProvider, child) {
-                          return Text(
-                            locationProvider.currentCountry!,
-                            style: const TextStyle(color: Colors.white, fontSize: 14,decoration: TextDecoration.underline,),
-                          );
-                        })
+                      return Text(
+                        locationProvider.currentCountry!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
+                        ),
+                      );
+                    })
                   ],
                 ),
               ),
@@ -124,9 +140,15 @@ class _HomePageState extends State<HomePage> {
           onPressed: () {
             _bottomSheetMethods.showCustomBottomSheet(
               heading: 'Filter by categories',
-              applyFilter: () {},
+              applyFilter: () {
+                Navigator.pop(context);
+                _future = getNews(
+                    countryName: locationProvider.val!,
+                    categoryName: _categoryProvider.selectedCategory!);
+              },
               context: context,
-              childList: _selectCategoryBottomSheetUI.showSelectCategoryBottomSheet(),
+              childList:
+                  _selectCategoryBottomSheetUI.showSelectCategoryBottomSheet(),
             );
           },
           child: const Icon(Icons.filter_alt_outlined),
@@ -134,7 +156,6 @@ class _HomePageState extends State<HomePage> {
         body: SafeArea(
           child: Column(
             children: [
-
               GestureDetector(
                   onTap: () {
                     if (kDebugMode) {
@@ -151,10 +172,10 @@ class _HomePageState extends State<HomePage> {
                   child: Text(
                     'Top Headlines',
                     style: TextStyle(
-                        color: Theme.of(context).primaryColorDark,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      color: Theme.of(context).primaryColorDark,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

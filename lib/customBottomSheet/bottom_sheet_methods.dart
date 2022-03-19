@@ -25,7 +25,7 @@ class BottomSheetMethods {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: ElevatedButton(
                       onPressed: applyFilter,
-                      child: Text('Apply Filter'),
+                      child: const Text('Apply Filter'),
                       style: ButtonStyle(
                           padding: MaterialStateProperty.all(
                               const EdgeInsets.symmetric(
