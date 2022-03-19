@@ -11,6 +11,9 @@ class NewsApi {
     SearchApi networkHelper = SearchApi(
         '$newsUrl?country=$countryName&category=$categoryName&pageSize=10&page=$page&apiKey=$apiKey');
     var newsData = await networkHelper.getData();
+    if (newsData['status'] == 'error') {
+      return Future.error('Error while fetching data');
+    }
     return NewsListModel.fromJson(newsData);
   }
 }

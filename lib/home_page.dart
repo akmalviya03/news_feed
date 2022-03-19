@@ -33,16 +33,18 @@ class _HomePageState extends State<HomePage> {
 
   final BottomSheetMethods _bottomSheetMethods = BottomSheetMethods();
   final SelectLocationBottomSheetUI _selectLocationBottomSheetUI =
-      SelectLocationBottomSheetUI();
+  SelectLocationBottomSheetUI();
   final SelectCategoryBottomSheetUI _selectCategoryBottomSheetUI =
-      SelectCategoryBottomSheetUI();
+  SelectCategoryBottomSheetUI();
 
   Future getNews({String countryName = 'in', String categoryName = ""}) async {
-    newsListModel = await _newsApi.getCountryNews(
-        countryName: countryName, categoryName: categoryName);
-    newsProvider.initializeArticlesList(newsListModel.articles);
-    newsProvider.setTotalArticles(newsListModel.totalResults);
-    return 'Done';
+    await _newsApi.getCountryNews(
+        countryName: countryName, categoryName: categoryName).then((value) {
+      newsListModel = value as NewsListModel;
+      newsProvider.initializeArticlesList(newsListModel.articles);
+      newsProvider.setTotalArticles(newsListModel.totalResults);
+      return value;
+    });
   }
 
   Future loadMoreNews(
@@ -50,14 +52,17 @@ class _HomePageState extends State<HomePage> {
     if (((newsProvider.totalArticles)! > (newsProvider.totalArticlesInList)) &&
         newsProvider.fetchMore != true) {
       newsProvider.fetching();
-      newsListModel = await _newsApi.getCountryNews(
+       await _newsApi.getCountryNews(
           page: newsProvider.currentPage,
           categoryName: categoryName,
-          countryName: countryName);
-      newsProvider.addMoreArticlesToList(newsListModel.articles);
-      newsProvider.fetchingDone();
+          countryName: countryName).then((value) {
+         newsListModel = value as NewsListModel;
+         newsProvider.addMoreArticlesToList(newsListModel.articles);
+         newsProvider.fetchingDone();
+            return value;
+      });
+
     }
-    return 'Done';
   }
 
   void _scrollListener() {
@@ -98,16 +103,16 @@ class _HomePageState extends State<HomePage> {
                     applyFilter: () {
                       Navigator.pop(context);
                       locationProvider.setCountry(countries[
-                              countries.indexWhere((element) =>
-                                  element['val'] == locationProvider.val!)]
-                          ['location']!);
+                      countries.indexWhere((element) =>
+                      element['val'] == locationProvider.val!)]
+                      ['location']!);
                       _categoryProvider.resetSelectedCategory();
                       _future = getNews(countryName: locationProvider.val!);
                     });
               },
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   children: [
                     const Icon(
@@ -120,15 +125,15 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Consumer<LocationProvider>(
                         builder: (context, locationProvider, child) {
-                      return Text(
-                        locationProvider.currentCountry!,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          decoration: TextDecoration.underline,
-                        ),
-                      );
-                    })
+                          return Text(
+                            locationProvider.currentCountry!,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              decoration: TextDecoration.underline,
+                            ),
+                          );
+                        })
                   ],
                 ),
               ),
@@ -148,7 +153,7 @@ class _HomePageState extends State<HomePage> {
               },
               context: context,
               childList:
-                  _selectCategoryBottomSheetUI.showSelectCategoryBottomSheet(),
+              _selectCategoryBottomSheetUI.showSelectCategoryBottomSheet(),
             );
           },
           child: const Icon(Icons.filter_alt_outlined),
@@ -168,7 +173,7 @@ class _HomePageState extends State<HomePage> {
                 alignment: Alignment.centerLeft,
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                   child: Text(
                     'Top Headlines',
                     style: TextStyle(
@@ -192,8 +197,8 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Expanded(
                                 child: NewsList(
-                              controller: _controller,
-                            )),
+                                  controller: _controller,
+                                )),
                             Consumer<NewsProvider>(
                               builder: (context, newsProvider, child) {
                                 return Visibility(
@@ -204,7 +209,7 @@ class _HomePageState extends State<HomePage> {
                           ],
                         );
                       } else {
-                        return Text(snapshot.data.toString());
+                        return Text(snapshot.error.toString());
                       }
                     }),
               )
