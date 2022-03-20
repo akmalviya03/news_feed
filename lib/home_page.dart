@@ -47,9 +47,11 @@ class _HomePageState extends State<HomePage> {
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
-  Future getNews({String countryName = 'in', String categoryName = ""}) async {
+  Future getNews() async {
     await _newsApi
-        .getCountryNews(countryName: countryName, categoryName: categoryName)
+        .getCountryNews(
+            countryName: locationProvider.val!,
+            categoryName: _categoryProvider.selectedCategory)
         .then((value) {
       newsListModel = value as NewsListModel;
       newsProvider.initializeArticlesList(newsListModel.articles);
@@ -66,16 +68,15 @@ class _HomePageState extends State<HomePage> {
         duration: const Duration(milliseconds: 400), curve: Curves.easeIn);
   }
 
-  Future loadMoreNews(
-      {String countryName = 'in', String categoryName = ""}) async {
+  Future loadMoreNews() async {
     if (((newsProvider.totalArticles)! > (newsProvider.totalArticlesInList)) &&
         newsProvider.fetchMore != true) {
       newsProvider.fetching();
       await _newsApi
           .getCountryNews(
               page: newsProvider.currentPage,
-              categoryName: categoryName,
-              countryName: countryName)
+              categoryName: _categoryProvider.selectedCategory,
+              countryName: locationProvider.val!)
           .then((value) {
         newsListModel = value as NewsListModel;
         newsProvider.addMoreArticlesToList(newsListModel.articles);
@@ -91,9 +92,7 @@ class _HomePageState extends State<HomePage> {
   void _scrollListener() {
     if (_controller.position.extentAfter == 0 &&
         newsProvider.fetchMore != true) {
-      loadMoreNews(
-          countryName: locationProvider.val!,
-          categoryName: _categoryProvider.selectedCategory);
+      loadMoreNews();
     }
   }
 
@@ -111,7 +110,6 @@ class _HomePageState extends State<HomePage> {
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
     _future = getNews();
-
   }
 
   @override
@@ -186,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                                 element['val'] == locationProvider.val!)]
                         ['location']!);
                     _categoryProvider.resetSelectedCategory();
-                    _future = getNews(countryName: locationProvider.val!);
+                    _future = getNews();
                   });
             },
             child: Padding(
@@ -225,9 +223,7 @@ class _HomePageState extends State<HomePage> {
             heading: 'Filter by categories',
             applyFilter: () {
               Navigator.pop(context);
-              _future = getNews(
-                  countryName: locationProvider.val!,
-                  categoryName: _categoryProvider.selectedCategory);
+              _future = getNews();
             },
             context: context,
             childList:
@@ -290,21 +286,36 @@ class _HomePageState extends State<HomePage> {
                                       ? NewsList(
                                           controller: _controller,
                                         )
-                                      : connectivityProvider.prevConnected == false ?  Center(
-                                          child: Column(
-                                            children: [
-                                              const Text(
-                                                  'OOPS! We ran out of articles'),
-                                              ElevatedButton(onPressed: (){
-                                                setState(() {
-                                                  _future = getNews();
-                                                });
-
-                                              }, child: const Text('Retry'))
-                                            ],
-                                          )):const Center(
-                                      child: Text(
-                                          'OOPS! We ran out of articles')),
+                                      : connectivityProvider.prevConnected ==
+                                              false
+                                          ? Center(
+                                              child: Center(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  const Text(
+                                                      'No Internet Connection'),
+                                                  ElevatedButton(
+                                                      style: ButtonStyle(
+                                                          backgroundColor:
+                                                              MaterialStateProperty
+                                                                  .all(Theme.of(
+                                                                          context)
+                                                                      .primaryColor)),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _future = getNews();
+                                                        });
+                                                      },
+                                                      child:
+                                                          const Text('Retry'))
+                                                ],
+                                              ),
+                                            ))
+                                          : const Center(
+                                              child: Text(
+                                                  'OOPS! We ran out of articles')),
                                 ),
                                 Consumer<NewsProvider>(
                                   builder: (context, newsProvider, child) {
@@ -326,8 +337,7 @@ class _HomePageState extends State<HomePage> {
             );
           } else {
             return const Center(
-                child: Text(
-                    'OOPS! You are not connected to the internet'));
+                child: Text('OOPS! You are not connected to the internet'));
           }
         },
       ),
