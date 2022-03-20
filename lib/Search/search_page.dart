@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:news_feed/News/newsModels/articles_model.dart';
-import 'package:news_feed/Search/SearchProvider.dart';
-import 'package:news_feed/Shared/textFieldSearch.dart';
+import 'package:news_feed/Search/search_provider.dart';
+import 'package:news_feed/Shared/text_field_search.dart';
 import 'package:provider/provider.dart';
 import '../News/Provider/newsProvider.dart';
 import '../News/UI/news_card.dart';
@@ -69,13 +69,13 @@ class _SearchPageState extends State<SearchPage> {
             Consumer<SearchProvider>(
               builder: (context, searchProvider, child) {
                 return Expanded(
-                    child: searchProvider.get_searched_articles.isNotEmpty
+                    child: searchProvider.getSearchedArticles.isNotEmpty
                         ? ListView.builder(
                             itemCount:
-                                searchProvider.get_searched_articles.length,
+                                searchProvider.getSearchedArticles.length,
                             itemBuilder: (context, index) => NewsCard(
                                   article:
-                                      searchProvider.get_searched_articles[index],
+                                      searchProvider.getSearchedArticles[index],
                                 ))
                         : counter < 1
                             ? const Center(

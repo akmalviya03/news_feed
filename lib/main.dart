@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:news_feed/Category/Provider/category_provider.dart';
 import 'package:news_feed/Location/Provider/location_provider.dart';
-import 'Search/SearchProvider.dart';
+import 'Search/search_provider.dart';
 import 'networkApis/connectivity_provider.dart';
 import 'Home/home_page.dart';
 import 'News/Provider/newsProvider.dart';
