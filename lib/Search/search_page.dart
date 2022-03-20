@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:news_feed/News/newsModels/articles_model.dart';
 import 'package:news_feed/Search/SearchProvider.dart';
-import 'package:news_feed/textFieldSearch.dart';
+import 'package:news_feed/Shared/textFieldSearch.dart';
 import 'package:provider/provider.dart';
 import '../News/Provider/newsProvider.dart';
 import '../News/UI/news_card.dart';

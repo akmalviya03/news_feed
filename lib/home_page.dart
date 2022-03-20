@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:news_feed/Category/Provider/category_provider.dart';
 import 'package:news_feed/Search/search_page.dart';
 import 'package:news_feed/customBottomSheet/bottom_sheet_methods.dart';
-import 'package:news_feed/textFieldSearch.dart';
+import 'package:news_feed/Shared/textFieldSearch.dart';
 import 'package:provider/provider.dart';
 import 'Category/UI/select_category_bottomsheet_ui.dart';
 import 'Location/UI/select_location_bottomsheet_ui.dart';
