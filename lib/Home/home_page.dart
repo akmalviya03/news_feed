@@ -297,7 +297,10 @@ class _HomePageState extends State<HomePage> {
                                                 ],
                                               ),
                                             ))
-                                          : const CenterText(text: 'OOPS! We ran out of articles',),
+                                          : const CenterText(
+                                              text:
+                                                  'OOPS! We ran out of articles',
+                                            ),
                                 ),
                                 Consumer<NewsProvider>(
                                   builder: (context, newsProvider, child) {
@@ -318,12 +321,11 @@ class _HomePageState extends State<HomePage> {
               ),
             );
           } else {
-            return const CenterText(text: 'OOPS! You are not connected to the internet');
+            return const CenterText(
+                text: 'OOPS! You are not connected to the internet');
           }
         },
       ),
     );
   }
 }
-
-
