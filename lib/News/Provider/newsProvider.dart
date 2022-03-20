@@ -4,7 +4,7 @@ import 'package:news_feed/News/newsModels/articles_model.dart';
 class NewsProvider with ChangeNotifier {
   late int? _totalArticles;
   late int _currentPage=1;
-  late List<Articles>? _articles;
+  late List<Articles>? _articles=[];
   late int _totalArticlesInList=0;
   late bool _fetchMore = false;
 
@@ -15,6 +15,7 @@ class NewsProvider with ChangeNotifier {
   bool get fetchMore => _fetchMore;
 
   void initializeArticlesList(List<Articles>? _articlesFromHome) {
+    resetCurrentPage();
     _articles = [];
     _articles = _articlesFromHome;
     _totalArticlesInList= _articles!.length;
@@ -26,11 +27,16 @@ class NewsProvider with ChangeNotifier {
     _currentPage++;
   }
 
+  void resetCurrentPage(){
+    _currentPage =1;
+  }
+
   void addMoreArticlesToList(List<Articles>? _moreArticles) {
     _moreArticles?.forEach((element) {
       _articles?.add(element);
     });
     _totalArticlesInList= _articles!.length;
+    incrementCurrentPage();
     notifyListeners();
   }
 

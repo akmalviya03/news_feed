@@ -1,3 +1,4 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'details_page.dart';
 import '../newsModels/articles_model.dart';
@@ -66,15 +67,18 @@ class NewsCard extends StatelessWidget {
                   const SizedBox(
                     width: 8,
                   ),
-                  Hero(
-                  tag: article.urlToImage ?? 'https://www.drodd.com/images14/black7.jpg',
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
+                  Flexible(
+                    child: Hero(
+                    tag: article.urlToImage ?? 'https://www.drodd.com/images14/black7.jpg',
+                      child: ExtendedImage.network(
                         article.urlToImage ?? 'https://www.drodd.com/images14/black7.jpg',
-                        height: 100,
                         width: 100,
-                        fit: BoxFit.cover,
+                        height: 100,
+                        fit: BoxFit.fill,
+                        shape: BoxShape.rectangle,
+                        cache: true,
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        //cancelToken: cancellationToken,
                       ),
                     ),
                   )

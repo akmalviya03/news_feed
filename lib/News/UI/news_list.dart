@@ -5,8 +5,10 @@ import 'news_card.dart';
 
 class NewsList extends StatelessWidget {
   const NewsList({
-    Key? key, required ScrollController controller,
-  }) :_controller=controller, super(key: key);
+    Key? key,
+    required ScrollController controller,
+  })  : _controller = controller,
+        super(key: key);
 
   final ScrollController _controller;
   @override
@@ -14,10 +16,10 @@ class NewsList extends StatelessWidget {
     return Consumer<NewsProvider>(
       builder: (context, newsProvider, child) {
         return ListView.builder(
-          controller: _controller,
+            controller: _controller,
             itemCount: newsProvider.articles?.length,
             itemBuilder: (context, index) => NewsCard(
-                 article: newsProvider.articles![index],
+                  article: newsProvider.articles![index],
                 ));
       },
     );

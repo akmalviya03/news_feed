@@ -33,17 +33,21 @@ class _HomePageState extends State<HomePage> {
 
   final BottomSheetMethods _bottomSheetMethods = BottomSheetMethods();
   final SelectLocationBottomSheetUI _selectLocationBottomSheetUI =
-  SelectLocationBottomSheetUI();
+      SelectLocationBottomSheetUI();
   final SelectCategoryBottomSheetUI _selectCategoryBottomSheetUI =
-  SelectCategoryBottomSheetUI();
+      SelectCategoryBottomSheetUI();
 
   Future getNews({String countryName = 'in', String categoryName = ""}) async {
-    await _newsApi.getCountryNews(
-        countryName: countryName, categoryName: categoryName).then((value) {
+    await _newsApi
+        .getCountryNews(countryName: countryName, categoryName: categoryName)
+        .then((value) {
+      print(value);
       newsListModel = value as NewsListModel;
       newsProvider.initializeArticlesList(newsListModel.articles);
       newsProvider.setTotalArticles(newsListModel.totalResults);
       return value;
+    }, onError: (error) {
+      print(error);
     });
   }
 
@@ -52,23 +56,27 @@ class _HomePageState extends State<HomePage> {
     if (((newsProvider.totalArticles)! > (newsProvider.totalArticlesInList)) &&
         newsProvider.fetchMore != true) {
       newsProvider.fetching();
-       await _newsApi.getCountryNews(
-          page: newsProvider.currentPage,
-          categoryName: categoryName,
-          countryName: countryName).then((value) {
-         newsListModel = value as NewsListModel;
-         newsProvider.addMoreArticlesToList(newsListModel.articles);
-         newsProvider.fetchingDone();
-            return value;
+      await _newsApi
+          .getCountryNews(
+              page: newsProvider.currentPage,
+              categoryName: categoryName,
+              countryName: countryName)
+          .then((value) {
+        newsListModel = value as NewsListModel;
+        newsProvider.addMoreArticlesToList(newsListModel.articles);
+        newsProvider.fetchingDone();
+        return value;
       });
-
     }
+    return Future.value('We are having some issues while fetching data');
   }
 
   void _scrollListener() {
     if (_controller.position.extentAfter == 0 &&
         newsProvider.fetchMore != true) {
-      loadMoreNews(countryName: locationProvider.val!,categoryName: _categoryProvider.selectedCategory);
+      loadMoreNews(
+          countryName: locationProvider.val!,
+          categoryName: _categoryProvider.selectedCategory);
     }
   }
 
@@ -103,16 +111,16 @@ class _HomePageState extends State<HomePage> {
                     applyFilter: () {
                       Navigator.pop(context);
                       locationProvider.setCountry(countries[
-                      countries.indexWhere((element) =>
-                      element['val'] == locationProvider.val!)]
-                      ['location']!);
+                              countries.indexWhere((element) =>
+                                  element['val'] == locationProvider.val!)]
+                          ['location']!);
                       _categoryProvider.resetSelectedCategory();
                       _future = getNews(countryName: locationProvider.val!);
                     });
               },
               child: Padding(
                 padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   children: [
                     const Icon(
@@ -125,15 +133,15 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Consumer<LocationProvider>(
                         builder: (context, locationProvider, child) {
-                          return Text(
-                            locationProvider.currentCountry!,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              decoration: TextDecoration.underline,
-                            ),
-                          );
-                        })
+                      return Text(
+                        locationProvider.currentCountry!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
+                        ),
+                      );
+                    })
                   ],
                 ),
               ),
@@ -153,7 +161,7 @@ class _HomePageState extends State<HomePage> {
               },
               context: context,
               childList:
-              _selectCategoryBottomSheetUI.showSelectCategoryBottomSheet(),
+                  _selectCategoryBottomSheetUI.showSelectCategoryBottomSheet(),
             );
           },
           child: const Icon(Icons.filter_alt_outlined),
@@ -173,7 +181,7 @@ class _HomePageState extends State<HomePage> {
                 alignment: Alignment.centerLeft,
                 child: Padding(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                   child: Text(
                     'Top Headlines',
                     style: TextStyle(
@@ -191,14 +199,18 @@ class _HomePageState extends State<HomePage> {
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasData &&
-                          snapshot.connectionState == ConnectionState.done) {
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.done) {
                         return Column(
                           children: [
                             Expanded(
-                                child: NewsList(
-                                  controller: _controller,
-                                )),
+                              child: newsProvider.articles!.isNotEmpty
+                                  ? NewsList(
+                                      controller: _controller,
+                                    )
+                                  : const Center(
+                                      child: Text('OOPS! We ran out of articles')),
+                            ),
                             Consumer<NewsProvider>(
                               builder: (context, newsProvider, child) {
                                 return Visibility(
