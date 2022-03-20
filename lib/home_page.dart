@@ -23,7 +23,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final NewsApi _newsApi = NewsApi();
-  // String dropdownValue = 'Newest';
+
   late Future _future;
   late ScrollController _controller;
   late NewsListModel newsListModel;
@@ -49,14 +49,14 @@ class _HomePageState extends State<HomePage> {
     }, onError: (error) {
       return error;
     });
-    scroll_to_top();
+    scrollToTop();
   }
-Future<void> scroll_to_top(){
-    return _controller.animateTo(
-        _controller.position.minScrollExtent,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeIn);
-}
+
+  Future<void> scrollToTop() {
+    return _controller.animateTo(_controller.position.minScrollExtent,
+        duration: const Duration(milliseconds: 400), curve: Curves.easeIn);
+  }
+
   Future loadMoreNews(
       {String countryName = 'in', String categoryName = ""}) async {
     if (((newsProvider.totalArticles)! > (newsProvider.totalArticlesInList)) &&
@@ -185,8 +185,12 @@ Future<void> scroll_to_top(){
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const SearchPage()));
                   },
-                  child:  Hero(
-                      tag: 'Search', child: TextFieldSearch(enabled: false, callback: (String ) {  },))),
+                  child: Hero(
+                      tag: 'Search',
+                      child: TextFieldSearch(
+                        enabled: false,
+                        callback: (string) {},
+                      ))),
               //Top Headlines
               Align(
                 alignment: Alignment.centerLeft,
