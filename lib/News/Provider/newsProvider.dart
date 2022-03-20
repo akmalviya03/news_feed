@@ -19,7 +19,7 @@ class NewsProvider with ChangeNotifier {
     _articles = [];
     _articles = _articlesFromHome;
     _totalArticlesInList= _articles!.length;
-    incrementCurrentPage();
+    _currentPage = 2;
     notifyListeners();
   }
 
