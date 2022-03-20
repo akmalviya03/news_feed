@@ -11,6 +11,7 @@ import 'package:news_feed/Shared/text_field_search.dart';
 import 'package:provider/provider.dart';
 import '../Category/UI/select_category_bottomsheet_ui.dart';
 import '../Location/UI/select_location_bottomsheet_ui.dart';
+import '../center_text.dart';
 import '../networkApis/connectivity_provider.dart';
 import '../Utility/constants.dart';
 import '../Location/Provider/location_provider.dart';
@@ -71,7 +72,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future loadMoreNews() async {
-    if (((_newsProvider.totalArticles)! > (_newsProvider.totalArticlesInList)) &&
+    if (((_newsProvider.totalArticles)! >
+            (_newsProvider.totalArticlesInList)) &&
         _newsProvider.fetchMore != true) {
       _newsProvider.fetching();
       await _newsApi
@@ -166,7 +168,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
-        title:  Text(
+        title: Text(
           'MyNEWS',
           style: GoogleFonts.montserrat(color: Colors.white, fontSize: 16),
         ),
@@ -270,8 +272,11 @@ class _HomePageState extends State<HomePage> {
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: [
-                                                   Text(
-                                                      'No Internet Connection',style: GoogleFonts.montserrat(),),
+                                                  Text(
+                                                    'No Internet Connection',
+                                                    style: GoogleFonts
+                                                        .montserrat(),
+                                                  ),
                                                   ElevatedButton(
                                                       style: ButtonStyle(
                                                           backgroundColor:
@@ -284,14 +289,15 @@ class _HomePageState extends State<HomePage> {
                                                           _future = getNews();
                                                         });
                                                       },
-                                                      child:
-                                                           Text('Retry',style: GoogleFonts.montserrat(),))
+                                                      child: Text(
+                                                        'Retry',
+                                                        style: GoogleFonts
+                                                            .montserrat(),
+                                                      ))
                                                 ],
                                               ),
                                             ))
-                                          :  Center(
-                                              child: Text(
-                                                  'OOPS! We ran out of articles',style: GoogleFonts.montserrat(),)),
+                                          : const CenterText(text: 'OOPS! We ran out of articles',),
                                 ),
                                 Consumer<NewsProvider>(
                                   builder: (context, newsProvider, child) {
@@ -304,7 +310,7 @@ class _HomePageState extends State<HomePage> {
                               ],
                             );
                           } else {
-                            return Text(snapshot.error.toString(),style: GoogleFonts.montserrat(),);
+                            return CenterText(text: snapshot.error.toString());
                           }
                         }),
                   )
@@ -312,8 +318,7 @@ class _HomePageState extends State<HomePage> {
               ),
             );
           } else {
-            return  Center(
-                child: Text('OOPS! You are not connected to the internet',style: GoogleFonts.montserrat(),));
+            return const CenterText(text: 'OOPS! You are not connected to the internet');
           }
         },
       ),

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:news_feed/Home/home_page.dart';
 import 'package:news_feed/News/newsModels/articles_model.dart';
 import 'package:news_feed/Search/search_provider.dart';
 import 'package:news_feed/Shared/text_field_search.dart';
 import 'package:provider/provider.dart';
 import '../News/Provider/newsProvider.dart';
 import '../News/UI/news_card.dart';
+import '../center_text.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -80,14 +82,10 @@ class _SearchPageState extends State<SearchPage> {
                                   article:
                                       searchProvider.getSearchedArticles[index],
                                 ))
-                        : Center(
-                            child: Text(
-                              counter < 1
-                                  ? 'We have plenty of news articles you can search from them'
-                                  : 'OOPS! We have no item with this name',
-                              style: GoogleFonts.montserrat(),
-                            ),
-                          ));
+                        : CenterText(
+                            text: counter < 1
+                                ? 'We have plenty of news articles you can search from them'
+                                : 'OOPS! We have no item with this name'));
               },
             )
           ],
