@@ -13,6 +13,7 @@ import 'Location/UI/select_location_bottomsheet_ui.dart';
 import 'connectivity_provider.dart';
 import 'constants.dart';
 import 'Location/Provider/location_provider.dart';
+import 'location_button.dart';
 import 'networkApis/news_api.dart';
 import 'News/newsModels/news_list_model.dart';
 import 'News/Provider/newsProvider.dart';
@@ -106,7 +107,6 @@ class _HomePageState extends State<HomePage> {
         Provider.of<ConnectivityProvider>(context, listen: false);
     _controller = ScrollController()..addListener(_scrollListener);
     initConnectivity();
-
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
     _future = getNews();
@@ -187,32 +187,7 @@ class _HomePageState extends State<HomePage> {
                     _future = getNews();
                   });
             },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.location_on,
-                    color: Colors.white,
-                    size: 14,
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Consumer<LocationProvider>(
-                      builder: (context, locationProvider, child) {
-                    return Text(
-                      locationProvider.currentCountry!,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        decoration: TextDecoration.underline,
-                      ),
-                    );
-                  })
-                ],
-              ),
-            ),
+            child: const LocationButton(),
           ),
         ],
       ),
@@ -344,3 +319,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
