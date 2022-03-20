@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:news_feed/Category/Provider/category_provider.dart';
+import 'package:news_feed/Search/search_page.dart';
 import 'package:news_feed/customBottomSheet/bottom_sheet_methods.dart';
 import 'package:news_feed/textFieldSearch.dart';
 import 'package:provider/provider.dart';
@@ -48,8 +49,14 @@ class _HomePageState extends State<HomePage> {
     }, onError: (error) {
       return error;
     });
+    scroll_to_top();
   }
-
+Future<void> scroll_to_top(){
+    return _controller.animateTo(
+        _controller.position.minScrollExtent,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeIn);
+}
   Future loadMoreNews(
       {String countryName = 'in', String categoryName = ""}) async {
     if (((newsProvider.totalArticles)! > (newsProvider.totalArticlesInList)) &&
@@ -175,8 +182,11 @@ class _HomePageState extends State<HomePage> {
                     if (kDebugMode) {
                       print('Hello');
                     }
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const SearchPage()));
                   },
-                  child: const TextFieldSearch(enabled: false)),
+                  child:  Hero(
+                      tag: 'Search', child: TextFieldSearch(enabled: false, callback: (String ) {  },))),
               //Top Headlines
               Align(
                 alignment: Alignment.centerLeft,

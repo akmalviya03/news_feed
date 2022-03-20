@@ -74,7 +74,7 @@ class NewsCard extends StatelessWidget {
                         article.urlToImage ?? 'https://www.drodd.com/images14/black7.jpg',
                         width: 100,
                         height: 100,
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                         shape: BoxShape.rectangle,
                         cache: true,
                         borderRadius: BorderRadius.all(Radius.circular(8)),

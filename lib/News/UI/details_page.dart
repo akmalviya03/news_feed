@@ -1,3 +1,4 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
 import '../newsModels/articles_model.dart';
@@ -21,11 +22,12 @@ class DetailsPage extends StatelessWidget {
                   'https://www.drodd.com/images14/black7.jpg',
               child: Stack(
                 children: [
-                  Image.network(
-                    article.urlToImage ??
-                        'https://www.drodd.com/images14/black7.jpg',
+                  ExtendedImage.network(
+                    article.urlToImage ?? 'https://www.drodd.com/images14/black7.jpg',
                     width: MediaQuery.of(context).size.width,
                     fit: BoxFit.cover,
+                    shape: BoxShape.rectangle,
+                    cache: true,
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width,
