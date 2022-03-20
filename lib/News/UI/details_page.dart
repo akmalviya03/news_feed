@@ -1,12 +1,13 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:news_feed/date_formatter.dart';
 
 import '../newsModels/articles_model.dart';
 
 class DetailsPage extends StatelessWidget {
-  const DetailsPage({Key? key, required this.article}) : super(key: key);
+  const DetailsPage({Key? key, required this.article,required DateFormatter dateFormatter}) : _dateFormatter = dateFormatter,super(key: key);
   final Articles article;
-
+  final DateFormatter _dateFormatter;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +33,7 @@ class DetailsPage extends StatelessWidget {
                   Container(
                     width: MediaQuery.of(context).size.width,
                     alignment: Alignment.bottomLeft,
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     decoration: const BoxDecoration(
                         gradient: LinearGradient(
                             begin: Alignment.topCenter,
@@ -66,11 +67,11 @@ class DetailsPage extends StatelessWidget {
                           fontStyle: FontStyle.italic),
                     ),
                     Text(
-                      article.publishedAt ?? 'Default Source',
+                      article.publishedAt !=null ? _dateFormatter.formatMyDate(article.publishedAt!): 'Error While fetching date',
                       style: const TextStyle(
                           fontSize: 12, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 16,
                     ),
                     Text(article.content ?? 'Default Content'),

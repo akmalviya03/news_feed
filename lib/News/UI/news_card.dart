@@ -1,21 +1,23 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:news_feed/date_formatter.dart';
 import 'details_page.dart';
 import '../newsModels/articles_model.dart';
 
 class NewsCard extends StatelessWidget {
-  const NewsCard({
+   NewsCard({
     Key? key,
     required this.article,
   }) : super(key: key);
 
   final Articles article;
+  final DateFormatter _dateFormatter=DateFormatter();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) =>  DetailsPage(article: article,)));
+            .push(MaterialPageRoute(builder: (context) =>  DetailsPage(article: article, dateFormatter: _dateFormatter,)));
       },
       child: Card(
           elevation: 4,
@@ -56,7 +58,7 @@ class NewsCard extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          article.publishedAt ?? 'Error While fetching date',
+                         article.publishedAt !=null ? _dateFormatter.formatMyDate(article.publishedAt!): 'Error While fetching date',
                           style: const TextStyle(
                             fontSize: 12,
                           ),
