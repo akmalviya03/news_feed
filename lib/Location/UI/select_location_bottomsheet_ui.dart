@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../Utility/constants.dart';
 import '../Provider/location_provider.dart';
@@ -12,7 +13,7 @@ class SelectLocationBottomSheetUI {
                 return RadioListTile(
                     controlAffinity: ListTileControlAffinity.trailing,
                     contentPadding: EdgeInsets.zero,
-                    title: Text(countries[index]['location']!),
+                    title: Text(countries[index]['location']!,style: GoogleFonts.montserrat(),),
                     value: countries[index]['val']!,
                     groupValue: locationProvider.val,
                     onChanged: (value) {

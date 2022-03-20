@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:news_feed/News/newsModels/articles_model.dart';
 import 'package:news_feed/Search/search_provider.dart';
 import 'package:news_feed/Shared/text_field_search.dart';
@@ -28,19 +29,21 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
-      onVerticalDragEnd: (de){
+      onVerticalDragEnd: (de) {
         FocusManager.instance.primaryFocus?.unfocus();
       },
-
-      onHorizontalDragStart: (de){
+      onHorizontalDragStart: (de) {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Search'),
+          title: Text(
+            'Search',
+            style: GoogleFonts.montserrat(),
+          ),
           backgroundColor: Theme.of(context).primaryColor,
         ),
         body: Column(
@@ -77,15 +80,14 @@ class _SearchPageState extends State<SearchPage> {
                                   article:
                                       searchProvider.getSearchedArticles[index],
                                 ))
-                        : counter < 1
-                            ? const Center(
-                                child: Text(
-                                    'We have plenty of news articles you can search from them'),
-                              )
-                            : const Center(
-                                child:
-                                    Text('OOPS! We have no item with this name'),
-                              ));
+                        : Center(
+                            child: Text(
+                              counter < 1
+                                  ? 'We have plenty of news articles you can search from them'
+                                  : 'OOPS! We have no item with this name',
+                              style: GoogleFonts.montserrat(),
+                            ),
+                          ));
               },
             )
           ],

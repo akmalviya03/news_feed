@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TextFieldSearch extends StatelessWidget {
   final Function(String) callback;
@@ -21,8 +22,10 @@ class TextFieldSearch extends StatelessWidget {
             enabled: enabled,
             onChanged: callback,
             keyboardType: TextInputType.name,
+            style:  GoogleFonts.montserrat(),
             decoration: InputDecoration(
               hintText: 'Search for news,topics...',
+              hintStyle: GoogleFonts.montserrat(),
               fillColor: Theme.of(context).backgroundColor,
               filled: true,
               suffixIcon: Icon(

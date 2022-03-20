@@ -270,8 +270,8 @@ class _HomePageState extends State<HomePage> {
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: [
-                                                  const Text(
-                                                      'No Internet Connection'),
+                                                   Text(
+                                                      'No Internet Connection',style: GoogleFonts.montserrat(),),
                                                   ElevatedButton(
                                                       style: ButtonStyle(
                                                           backgroundColor:
@@ -285,13 +285,13 @@ class _HomePageState extends State<HomePage> {
                                                         });
                                                       },
                                                       child:
-                                                          const Text('Retry'))
+                                                           Text('Retry',style: GoogleFonts.montserrat(),))
                                                 ],
                                               ),
                                             ))
-                                          : const Center(
+                                          :  Center(
                                               child: Text(
-                                                  'OOPS! We ran out of articles')),
+                                                  'OOPS! We ran out of articles',style: GoogleFonts.montserrat(),)),
                                 ),
                                 Consumer<NewsProvider>(
                                   builder: (context, newsProvider, child) {
@@ -304,7 +304,7 @@ class _HomePageState extends State<HomePage> {
                               ],
                             );
                           } else {
-                            return Text(snapshot.error.toString());
+                            return Text(snapshot.error.toString(),style: GoogleFonts.montserrat(),);
                           }
                         }),
                   )
@@ -312,8 +312,8 @@ class _HomePageState extends State<HomePage> {
               ),
             );
           } else {
-            return const Center(
-                child: Text('OOPS! You are not connected to the internet'));
+            return  Center(
+                child: Text('OOPS! You are not connected to the internet',style: GoogleFonts.montserrat(),));
           }
         },
       ),
