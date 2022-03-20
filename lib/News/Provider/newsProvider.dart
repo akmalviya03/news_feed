@@ -51,7 +51,6 @@ class NewsProvider with ChangeNotifier {
   }
   void fetchingDone(){
     _fetchMore = false;
-    incrementCurrentPage();
     notifyListeners();
   }
 }

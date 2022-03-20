@@ -41,13 +41,12 @@ class _HomePageState extends State<HomePage> {
     await _newsApi
         .getCountryNews(countryName: countryName, categoryName: categoryName)
         .then((value) {
-      print(value);
       newsListModel = value as NewsListModel;
       newsProvider.initializeArticlesList(newsListModel.articles);
       newsProvider.setTotalArticles(newsListModel.totalResults);
       return value;
     }, onError: (error) {
-      print(error);
+      return error;
     });
   }
 
@@ -66,6 +65,8 @@ class _HomePageState extends State<HomePage> {
         newsProvider.addMoreArticlesToList(newsListModel.articles);
         newsProvider.fetchingDone();
         return value;
+      }, onError: (error) {
+        return error;
       });
     }
     return Future.value('We are having some issues while fetching data');
@@ -209,7 +210,8 @@ class _HomePageState extends State<HomePage> {
                                       controller: _controller,
                                     )
                                   : const Center(
-                                      child: Text('OOPS! We ran out of articles')),
+                                      child:
+                                          Text('OOPS! We ran out of articles')),
                             ),
                             Consumer<NewsProvider>(
                               builder: (context, newsProvider, child) {
