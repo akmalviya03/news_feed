@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CustomBottomSheet extends StatelessWidget {
   const CustomBottomSheet({
@@ -32,7 +33,7 @@ class CustomBottomSheet extends StatelessWidget {
             ),
              Text(
              heading,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style:  GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const Divider(
               thickness: 2,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../Location/Provider/location_provider.dart';
@@ -25,7 +26,7 @@ class LocationButton extends StatelessWidget {
               builder: (context, locationProvider, child) {
                 return Text(
                   locationProvider.currentCountry!,
-                  style: const TextStyle(
+                  style:  GoogleFonts.montserrat(
                     color: Colors.white,
                     fontSize: 14,
                     decoration: TextDecoration.underline,

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:news_feed/Category/Provider/category_provider.dart';
 import 'package:news_feed/Search/search_page.dart';
 import 'package:news_feed/customBottomSheet/bottom_sheet_methods.dart';
@@ -165,9 +166,9 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
-        title: const Text(
+        title:  Text(
           'MyNEWS',
-          style: TextStyle(color: Colors.white, fontSize: 16),
+          style: GoogleFonts.montserrat(color: Colors.white, fontSize: 16),
         ),
         actions: [
           GestureDetector(
@@ -235,7 +236,7 @@ class _HomePageState extends State<HomePage> {
                           horizontal: 16.0, vertical: 8),
                       child: Text(
                         'Top Headlines',
-                        style: TextStyle(
+                        style: GoogleFonts.montserrat(
                           color: Theme.of(context).primaryColorDark,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

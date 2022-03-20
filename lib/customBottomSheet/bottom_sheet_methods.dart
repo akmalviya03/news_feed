@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'custom_bottom_sheet_ui.dart';
 class BottomSheetMethods {
@@ -25,7 +26,7 @@ class BottomSheetMethods {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: ElevatedButton(
                       onPressed: applyFilter,
-                      child: const Text('Apply Filter'),
+                      child:  Text('Apply Filter',style: GoogleFonts.montserrat(),),
                       style: ButtonStyle(
                           padding: MaterialStateProperty.all(
                               const EdgeInsets.symmetric(

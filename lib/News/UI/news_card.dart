@@ -1,5 +1,6 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:news_feed/Utility/date_formatter.dart';
 import 'details_page.dart';
 import '../newsModels/articles_model.dart';
@@ -43,7 +44,7 @@ class NewsCard extends StatelessWidget {
                           children: [
                             Text(
                               _article.source?.name ?? 'Default Source',
-                              style: const TextStyle(
+                              style:  GoogleFonts.montserrat(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   fontStyle: FontStyle.italic),
@@ -55,7 +56,7 @@ class NewsCard extends StatelessWidget {
                               _article.description ?? 'Default Description',
                               overflow: TextOverflow.ellipsis,
                               maxLines: 3,
-                              style: const TextStyle(
+                              style:  GoogleFonts.montserrat(
                                 fontSize: 14,
                               ),
                             ),
@@ -66,7 +67,7 @@ class NewsCard extends StatelessWidget {
                               ? _dateFormatter
                                   .formatMyDate(_article.publishedAt!)
                               : 'Error While fetching date',
-                          style: const TextStyle(
+                          style:  GoogleFonts.montserrat(
                             fontSize: 12,
                           ),
                         ),
@@ -88,7 +89,7 @@ class NewsCard extends StatelessWidget {
                         fit: BoxFit.cover,
                         shape: BoxShape.rectangle,
                         cache: true,
-                        borderRadius: const BorderRadius.all(Radius.circular(8)),
+                        borderRadius: BorderRadius.all(const Radius.circular(8)),
                         //cancelToken: cancellationToken,
                       ),
                     ),

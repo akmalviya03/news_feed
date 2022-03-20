@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../Provider/category_provider.dart';
 import '../../Utility/constants.dart';
@@ -13,7 +14,7 @@ class SelectCategoryBottomSheetUI {
               return CheckboxListTile(
                   controlAffinity: ListTileControlAffinity.trailing,
                   contentPadding: EdgeInsets.zero,
-                  title: Text(categories[index]['category']),
+                  title: Text(categories[index]['category'],style: GoogleFonts.montserrat(),),
                   value: categories[index]['value'],
                   onChanged: (value) {
                     categories[index]['value'] = value!;

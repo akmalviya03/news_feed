@@ -1,5 +1,6 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:news_feed/Utility/date_formatter.dart';
 
 import '../newsModels/articles_model.dart';
@@ -49,7 +50,7 @@ class DetailsPage extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style:
-                            const TextStyle(color: Colors.white, fontSize: 16),
+                             GoogleFonts.montserrat(color: Colors.white, fontSize: 16),
                       ),
                     )
                   ],
@@ -68,7 +69,7 @@ class DetailsPage extends StatelessWidget {
                   children: [
                     Text(
                       article.source?.name ?? 'Default Source',
-                      style: const TextStyle(
+                      style:  GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           fontStyle: FontStyle.italic),
@@ -77,7 +78,7 @@ class DetailsPage extends StatelessWidget {
                       article.publishedAt != null
                           ? _dateFormatter.formatMyDate(article.publishedAt!)
                           : 'Error While fetching date',
-                      style: const TextStyle(
+                      style:  GoogleFonts.montserrat(
                           fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(
