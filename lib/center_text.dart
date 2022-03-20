@@ -9,11 +9,11 @@ class CenterText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.04),
       child: Center(
           child: Text(
             text,
-            style: GoogleFonts.montserrat(),
+            style: GoogleFonts.montserrat(fontSize: MediaQuery.of(context).size.width*0.035),
           )),
     );
   }

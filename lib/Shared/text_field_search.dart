@@ -16,16 +16,16 @@ class TextFieldSearch extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+        padding:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.04, vertical: MediaQuery.of(context).size.width*0.04),
         child: TextField(
           autofocus: autoFocus,
             enabled: enabled,
             onChanged: callback,
             keyboardType: TextInputType.name,
-            style:  GoogleFonts.montserrat(),
+            style:  GoogleFonts.montserrat(fontSize: MediaQuery.of(context).size.width*0.035),
             decoration: InputDecoration(
               hintText: 'Search for news,topics...',
-              hintStyle: GoogleFonts.montserrat(),
+              hintStyle: GoogleFonts.montserrat(fontSize: MediaQuery.of(context).size.width*0.035),
               fillColor: Theme.of(context).backgroundColor,
               filled: true,
               suffixIcon: Icon(
@@ -33,7 +33,7 @@ class TextFieldSearch extends StatelessWidget {
                 color: Theme.of(context).primaryColorDark,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width*0.02),
                 borderSide: BorderSide.none,
               ),
             ),

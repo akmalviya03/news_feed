@@ -14,30 +14,30 @@ class CustomBottomSheet extends StatelessWidget {
     return FractionallySizedBox(
       heightFactor: 0.6,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.04),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Align(
               alignment: Alignment.center,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width*0.04),
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.2,
                   height: MediaQuery.of(context).size.width * 0.015,
                   decoration: BoxDecoration(
                       color: Colors.grey,
-                      borderRadius: BorderRadius.circular(16)),
+                      borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width*0.04)),
                 ),
               ),
             ),
              Text(
              heading,
-              style:  GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.bold),
+              style:  GoogleFonts.montserrat(fontSize: MediaQuery.of(context).size.width*0.04, fontWeight: FontWeight.bold),
             ),
-            const Divider(
+             Divider(
               thickness: 2,
-              height: 16,
+              height: MediaQuery.of(context).size.width*0.04,
             ),
             Expanded(
               child: childWidget,

@@ -44,7 +44,7 @@ class _SearchPageState extends State<SearchPage> {
         appBar: AppBar(
           title: Text(
             'Search',
-            style: GoogleFonts.montserrat(),
+            style: GoogleFonts.montserrat(fontSize: MediaQuery.of(context).size.width*0.035),
           ),
           backgroundColor: Theme.of(context).primaryColor,
         ),

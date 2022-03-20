@@ -26,9 +26,9 @@ class NewsCard extends StatelessWidget {
       },
       child: Card(
           elevation: 4,
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          margin:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.04, vertical: MediaQuery.of(context).size.width*0.02),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding:  EdgeInsets.all(MediaQuery.of(context).size.width*0.04),
             child: IntrinsicHeight(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -45,19 +45,19 @@ class NewsCard extends StatelessWidget {
                             Text(
                               _article.source?.name ?? 'Default Source',
                               style:  GoogleFonts.montserrat(
-                                  fontSize: 16,
+                                  fontSize: MediaQuery.of(context).size.width*0.04,
                                   fontWeight: FontWeight.bold,
                                   fontStyle: FontStyle.italic),
                             ),
-                            const SizedBox(
-                              height: 8,
+                             SizedBox(
+                              height: MediaQuery.of(context).size.width*0.02,
                             ),
                             Text(
                               _article.description ?? 'Default Description',
                               overflow: TextOverflow.ellipsis,
                               maxLines: 3,
                               style:  GoogleFonts.montserrat(
-                                fontSize: 14,
+                                fontSize:  MediaQuery.of(context).size.width*0.035,
                               ),
                             ),
                           ],
@@ -68,14 +68,14 @@ class NewsCard extends StatelessWidget {
                                   .formatMyDate(_article.publishedAt!)
                               : 'Error While fetching date',
                           style:  GoogleFonts.montserrat(
-                            fontSize: 12,
+                            fontSize: MediaQuery.of(context).size.width*0.03,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    width: 8,
+                   SizedBox(
+                    width: MediaQuery.of(context).size.width*0.02,
                   ),
                   Flexible(
                     child: Hero(
@@ -89,7 +89,7 @@ class NewsCard extends StatelessWidget {
                         fit: BoxFit.cover,
                         shape: BoxShape.rectangle,
                         cache: true,
-                        borderRadius: BorderRadius.all(const Radius.circular(8)),
+                        borderRadius: BorderRadius.all( Radius.circular(MediaQuery.of(context).size.width*0.02)),
                         //cancelToken: cancellationToken,
                       ),
                     ),

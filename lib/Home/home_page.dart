@@ -170,7 +170,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).primaryColor,
         title: Text(
           'MyNEWS',
-          style: GoogleFonts.montserrat(color: Colors.white, fontSize: 16),
+          style: GoogleFonts.montserrat(color: Colors.white, fontSize: MediaQuery.of(context).size.width*0.04),
         ),
         actions: [
           GestureDetector(
@@ -234,13 +234,13 @@ class _HomePageState extends State<HomePage> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width*0.04),
                       child: Text(
                         'Top Headlines',
                         style: GoogleFonts.montserrat(
                           color: Theme.of(context).primaryColorDark,
-                          fontSize: 20,
+                          fontSize: MediaQuery.of(context).size.width*0.04,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

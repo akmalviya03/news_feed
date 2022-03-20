@@ -2,14 +2,14 @@
 // Container(
 //   color: Theme.of(context).primaryColor,
 //   child: Padding(
-//     padding: const EdgeInsets.all(16),
+//     padding: const EdgeInsets.all(MediaQuery.of(context).size.width*0.04),
 //     child: Row(
 //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //       crossAxisAlignment: CrossAxisAlignment.center,
 //       children: [
 //         const Text(
 //           'MyNEWS',
-//           style: TextStyle(color: Colors.white, fontSize: 16),
+//           style: TextStyle(color: Colors.white, fontSize: MediaQuery.of(context).size.width*0.04),
 //         ),
 //         GestureDetector(
 //           onTap: () {

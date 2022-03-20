@@ -11,16 +11,16 @@ class LocationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.04, vertical: MediaQuery.of(context).size.width*0.02),
       child: Row(
         children: [
-          const Icon(
+           Icon(
             Icons.location_on,
             color: Colors.white,
-            size: 14,
+            size: MediaQuery.of(context).size.width*0.035,
           ),
-          const SizedBox(
-            width: 8,
+          SizedBox(
+            width: MediaQuery.of(context).size.width*0.02,
           ),
           Consumer<LocationProvider>(
               builder: (context, locationProvider, child) {
@@ -28,7 +28,7 @@ class LocationButton extends StatelessWidget {
                   locationProvider.currentCountry!,
                   style:  GoogleFonts.montserrat(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontSize: MediaQuery.of(context).size.width*0.035,
                     decoration: TextDecoration.underline,
                   ),
                 );

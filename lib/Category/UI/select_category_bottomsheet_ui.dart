@@ -14,7 +14,7 @@ class SelectCategoryBottomSheetUI {
               return CheckboxListTile(
                   controlAffinity: ListTileControlAffinity.trailing,
                   contentPadding: EdgeInsets.zero,
-                  title: Text(categories[index]['category'],style: GoogleFonts.montserrat(),),
+                  title: Text(categories[index]['category'],style: GoogleFonts.montserrat(fontSize: MediaQuery.of(context).size.width*0.035),),
                   value: categories[index]['value'],
                   onChanged: (value) {
                     categories[index]['value'] = value!;

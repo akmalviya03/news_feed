@@ -39,7 +39,7 @@ class DetailsPage extends StatelessWidget {
                     Container(
                       width: MediaQuery.of(context).size.width,
                       alignment: Alignment.bottomLeft,
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(MediaQuery.of(context).size.width*0.04),
                       decoration: const BoxDecoration(
                           gradient: LinearGradient(
                               begin: Alignment.topCenter,
@@ -50,7 +50,7 @@ class DetailsPage extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style:
-                             GoogleFonts.montserrat(color: Colors.white, fontSize: 16),
+                             GoogleFonts.montserrat(color: Colors.white, fontSize: MediaQuery.of(context).size.width*0.04),
                       ),
                     )
                   ],
@@ -61,7 +61,7 @@ class DetailsPage extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              padding:  EdgeInsets.fromLTRB(MediaQuery.of(context).size.width*0.04, MediaQuery.of(context).size.width*0.04, MediaQuery.of(context).size.width*0.04, 0),
               child: Container(
                 alignment: Alignment.topLeft,
                 child: Column(
@@ -70,7 +70,7 @@ class DetailsPage extends StatelessWidget {
                     Text(
                       article.source?.name ?? 'Default Source',
                       style:  GoogleFonts.montserrat(
-                          fontSize: 16,
+                          fontSize: MediaQuery.of(context).size.width*0.04,
                           fontWeight: FontWeight.bold,
                           fontStyle: FontStyle.italic),
                     ),
@@ -79,12 +79,12 @@ class DetailsPage extends StatelessWidget {
                           ? _dateFormatter.formatMyDate(article.publishedAt!)
                           : 'Error While fetching date',
                       style:  GoogleFonts.montserrat(
-                          fontSize: 12, fontWeight: FontWeight.bold),
+                          fontSize: MediaQuery.of(context).size.width*0.03, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(
-                      height: 16,
+                     SizedBox(
+                      height: MediaQuery.of(context).size.width*0.04,
                     ),
-                    Text(article.content ?? 'Default Content',style: GoogleFonts.montserrat(),),
+                    Text(article.content ?? 'Default Content',style: GoogleFonts.montserrat(fontSize: MediaQuery.of(context).size.width*0.035),),
                   ],
                 ),
               ),

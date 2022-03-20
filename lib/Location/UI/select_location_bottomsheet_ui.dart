@@ -13,7 +13,7 @@ class SelectLocationBottomSheetUI {
                 return RadioListTile(
                     controlAffinity: ListTileControlAffinity.trailing,
                     contentPadding: EdgeInsets.zero,
-                    title: Text(countries[index]['location']!,style: GoogleFonts.montserrat(),),
+                    title: Text(countries[index]['location']!,style: GoogleFonts.montserrat(fontSize: MediaQuery.of(context).size.width*0.035),),
                     value: countries[index]['val']!,
                     groupValue: locationProvider.val,
                     onChanged: (value) {

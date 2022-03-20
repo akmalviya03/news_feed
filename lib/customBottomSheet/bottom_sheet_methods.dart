@@ -11,10 +11,10 @@ class BottomSheetMethods {
         context: context,
         enableDrag: true,
         isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
+        shape:  RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+            topLeft: Radius.circular(MediaQuery.of(context).size.width*0.04),
+            topRight: Radius.circular(MediaQuery.of(context).size.width*0.04),
           ),
         ),
         builder: (builder) {
@@ -23,14 +23,14 @@ class BottomSheetMethods {
               children: [
                 Expanded(child: childList),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width*0.04),
                   child: ElevatedButton(
                       onPressed: applyFilter,
-                      child:  Text('Apply Filter',style: GoogleFonts.montserrat(),),
+                      child:  Text('Apply Filter',style: GoogleFonts.montserrat(fontSize: MediaQuery.of(context).size.width*0.03),),
                       style: ButtonStyle(
                           padding: MaterialStateProperty.all(
-                              const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 8)),
+                               EdgeInsets.symmetric(
+                                  horizontal: MediaQuery.of(context).size.width*0.04, vertical: MediaQuery.of(context).size.width*0.02)),
                           backgroundColor: MaterialStateProperty.all(
                               Theme.of(context).primaryColor))),
                 ),
