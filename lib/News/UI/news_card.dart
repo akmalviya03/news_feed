@@ -1,23 +1,27 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:news_feed/date_formatter.dart';
+import 'package:news_feed/Utility/date_formatter.dart';
 import 'details_page.dart';
 import '../newsModels/articles_model.dart';
 
 class NewsCard extends StatelessWidget {
-   NewsCard({
+  NewsCard({
     Key? key,
-    required this.article,
-  }) : super(key: key);
+    required Articles article,
+  })  : _article = article,
+        super(key: key);
 
-  final Articles article;
-  final DateFormatter _dateFormatter=DateFormatter();
+  final Articles _article;
+  final DateFormatter _dateFormatter = DateFormatter();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) =>  DetailsPage(article: article, dateFormatter: _dateFormatter,)));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => DetailsPage(
+                  article: _article,
+                  dateFormatter: _dateFormatter,
+                )));
       },
       child: Card(
           elevation: 4,
@@ -38,7 +42,7 @@ class NewsCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              article.source?.name ?? 'Default Source',
+                              _article.source?.name ?? 'Default Source',
                               style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -48,7 +52,7 @@ class NewsCard extends StatelessWidget {
                               height: 8,
                             ),
                             Text(
-                              article.description ?? 'Default Description',
+                              _article.description ?? 'Default Description',
                               overflow: TextOverflow.ellipsis,
                               maxLines: 3,
                               style: const TextStyle(
@@ -58,7 +62,10 @@ class NewsCard extends StatelessWidget {
                           ],
                         ),
                         Text(
-                         article.publishedAt !=null ? _dateFormatter.formatMyDate(article.publishedAt!): 'Error While fetching date',
+                          _article.publishedAt != null
+                              ? _dateFormatter
+                                  .formatMyDate(_article.publishedAt!)
+                              : 'Error While fetching date',
                           style: const TextStyle(
                             fontSize: 12,
                           ),
@@ -71,15 +78,17 @@ class NewsCard extends StatelessWidget {
                   ),
                   Flexible(
                     child: Hero(
-                    tag: article.urlToImage ?? 'https://www.drodd.com/images14/black7.jpg',
+                      tag: _article.urlToImage ??
+                          'https://www.drodd.com/images14/black7.jpg',
                       child: ExtendedImage.network(
-                        article.urlToImage ?? 'https://www.drodd.com/images14/black7.jpg',
+                        _article.urlToImage ??
+                            'https://www.drodd.com/images14/black7.jpg',
                         width: 100,
                         height: 100,
                         fit: BoxFit.cover,
                         shape: BoxShape.rectangle,
                         cache: true,
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        borderRadius: const BorderRadius.all(Radius.circular(8)),
                         //cancelToken: cancellationToken,
                       ),
                     ),

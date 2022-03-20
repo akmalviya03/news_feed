@@ -1,11 +1,14 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:news_feed/date_formatter.dart';
+import 'package:news_feed/Utility/date_formatter.dart';
 
 import '../newsModels/articles_model.dart';
 
 class DetailsPage extends StatelessWidget {
-  const DetailsPage({Key? key, required this.article,required DateFormatter dateFormatter}) : _dateFormatter = dateFormatter,super(key: key);
+  const DetailsPage(
+      {Key? key, required this.article, required DateFormatter dateFormatter})
+      : _dateFormatter = dateFormatter,
+        super(key: key);
   final Articles article;
   final DateFormatter _dateFormatter;
   @override
@@ -21,32 +24,36 @@ class DetailsPage extends StatelessWidget {
             child: Hero(
               tag: article.urlToImage ??
                   'https://www.drodd.com/images14/black7.jpg',
-              child: Stack(
-                children: [
-                  ExtendedImage.network(
-                    article.urlToImage ?? 'https://www.drodd.com/images14/black7.jpg',
-                    width: MediaQuery.of(context).size.width,
-                    fit: BoxFit.cover,
-                    shape: BoxShape.rectangle,
-                    cache: true,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.bottomLeft,
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.transparent, Colors.black])),
-                    child: Text(
-                      article.title ?? 'Some Title',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+              child: Material(
+                child: Stack(
+                  children: [
+                    ExtendedImage.network(
+                      article.urlToImage ??
+                          'https://www.drodd.com/images14/black7.jpg',
+                      width: MediaQuery.of(context).size.width,
+                      fit: BoxFit.cover,
+                      shape: BoxShape.rectangle,
+                      cache: true,
                     ),
-                  )
-                ],
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      alignment: Alignment.bottomLeft,
+                      padding: const EdgeInsets.all(16),
+                      decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.transparent, Colors.black])),
+                      child: Text(
+                        article.title ?? 'Some Title',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -67,7 +74,9 @@ class DetailsPage extends StatelessWidget {
                           fontStyle: FontStyle.italic),
                     ),
                     Text(
-                      article.publishedAt !=null ? _dateFormatter.formatMyDate(article.publishedAt!): 'Error While fetching date',
+                      article.publishedAt != null
+                          ? _dateFormatter.formatMyDate(article.publishedAt!)
+                          : 'Error While fetching date',
                       style: const TextStyle(
                           fontSize: 12, fontWeight: FontWeight.bold),
                     ),

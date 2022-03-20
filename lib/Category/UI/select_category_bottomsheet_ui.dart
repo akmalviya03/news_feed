@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Provider/category_provider.dart';
-import '../../constants.dart';
+import '../../Utility/constants.dart';
 
 //Multiple categories are not supported By NewsApi Top Headlines
 class SelectCategoryBottomSheetUI {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../constants.dart';
+import '../../Utility/constants.dart';
 import '../Provider/location_provider.dart';
 
 class SelectLocationBottomSheetUI {

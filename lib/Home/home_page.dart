@@ -8,16 +8,16 @@ import 'package:news_feed/Search/search_page.dart';
 import 'package:news_feed/customBottomSheet/bottom_sheet_methods.dart';
 import 'package:news_feed/Shared/textFieldSearch.dart';
 import 'package:provider/provider.dart';
-import 'Category/UI/select_category_bottomsheet_ui.dart';
-import 'Location/UI/select_location_bottomsheet_ui.dart';
-import 'connectivity_provider.dart';
-import 'constants.dart';
-import 'Location/Provider/location_provider.dart';
+import '../Category/UI/select_category_bottomsheet_ui.dart';
+import '../Location/UI/select_location_bottomsheet_ui.dart';
+import '../networkApis/connectivity_provider.dart';
+import '../Utility/constants.dart';
+import '../Location/Provider/location_provider.dart';
 import 'location_button.dart';
-import 'networkApis/news_api.dart';
-import 'News/newsModels/news_list_model.dart';
-import 'News/Provider/newsProvider.dart';
-import 'News/UI/news_list.dart';
+import '../networkApis/news_api.dart';
+import '../News/newsModels/news_list_model.dart';
+import '../News/Provider/newsProvider.dart';
+import '../News/UI/news_list.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class HomePage extends StatefulWidget {
@@ -34,9 +34,9 @@ class _HomePageState extends State<HomePage> {
   late ScrollController _controller;
   late NewsListModel newsListModel;
 
-  late final LocationProvider locationProvider;
+  late final LocationProvider _locationProvider;
   late final ConnectivityProvider _connectivityProvider;
-  late final NewsProvider newsProvider;
+  late final NewsProvider _newsProvider;
   late final CategoryProvider _categoryProvider;
 
   final BottomSheetMethods _bottomSheetMethods = BottomSheetMethods();
@@ -51,12 +51,12 @@ class _HomePageState extends State<HomePage> {
   Future getNews() async {
     await _newsApi
         .getCountryNews(
-            countryName: locationProvider.val!,
+            countryName: _locationProvider.val!,
             categoryName: _categoryProvider.selectedCategory)
         .then((value) {
       newsListModel = value as NewsListModel;
-      newsProvider.initializeArticlesList(newsListModel.articles);
-      newsProvider.setTotalArticles(newsListModel.totalResults);
+      _newsProvider.initializeArticlesList(newsListModel.articles);
+      _newsProvider.setTotalArticles(newsListModel.totalResults);
       return value;
     }, onError: (error) {
       return error;
@@ -70,18 +70,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future loadMoreNews() async {
-    if (((newsProvider.totalArticles)! > (newsProvider.totalArticlesInList)) &&
-        newsProvider.fetchMore != true) {
-      newsProvider.fetching();
+    if (((_newsProvider.totalArticles)! > (_newsProvider.totalArticlesInList)) &&
+        _newsProvider.fetchMore != true) {
+      _newsProvider.fetching();
       await _newsApi
           .getCountryNews(
-              page: newsProvider.currentPage,
+              page: _newsProvider.currentPage,
               categoryName: _categoryProvider.selectedCategory,
-              countryName: locationProvider.val!)
+              countryName: _locationProvider.val!)
           .then((value) {
         newsListModel = value as NewsListModel;
-        newsProvider.addMoreArticlesToList(newsListModel.articles);
-        newsProvider.fetchingDone();
+        _newsProvider.addMoreArticlesToList(newsListModel.articles);
+        _newsProvider.fetchingDone();
         return value;
       }, onError: (error) {
         return error;
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
 
   void _scrollListener() {
     if (_controller.position.extentAfter == 0 &&
-        newsProvider.fetchMore != true) {
+        _newsProvider.fetchMore != true) {
       loadMoreNews();
     }
   }
@@ -100,8 +100,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    locationProvider = Provider.of<LocationProvider>(context, listen: false);
-    newsProvider = Provider.of<NewsProvider>(context, listen: false);
+    _locationProvider = Provider.of<LocationProvider>(context, listen: false);
+    _newsProvider = Provider.of<NewsProvider>(context, listen: false);
     _categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
     _connectivityProvider =
         Provider.of<ConnectivityProvider>(context, listen: false);
@@ -116,9 +116,9 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     _connectivitySubscription.cancel();
     _controller.dispose();
-    newsProvider.dispose();
+    _newsProvider.dispose();
     _categoryProvider.dispose();
-    locationProvider.dispose();
+    _locationProvider.dispose();
     _connectivityProvider.dispose();
     super.dispose();
   }
@@ -179,9 +179,9 @@ class _HomePageState extends State<HomePage> {
                   heading: 'Choose your Location',
                   applyFilter: () {
                     Navigator.pop(context);
-                    locationProvider.setCountry(countries[countries.indexWhere(
+                    _locationProvider.setCountry(countries[countries.indexWhere(
                             (element) =>
-                                element['val'] == locationProvider.val!)]
+                                element['val'] == _locationProvider.val!)]
                         ['location']!);
                     _categoryProvider.resetSelectedCategory();
                     _future = getNews();
@@ -257,7 +257,7 @@ class _HomePageState extends State<HomePage> {
                             return Column(
                               children: [
                                 Expanded(
-                                  child: newsProvider.articles!.isNotEmpty
+                                  child: _newsProvider.articles!.isNotEmpty
                                       ? NewsList(
                                           controller: _controller,
                                         )
