@@ -1,9 +1,9 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:news_feed/Utility/date_formatter.dart';
-import 'details_page.dart';
-import '../newsModels/articles_model.dart';
+import 'package:news_feed/Services/date_formatter.dart';
+import '../Views/details_page.dart';
+import '../Models/articles_model.dart';
 
 class NewsCard extends StatelessWidget {
   NewsCard({

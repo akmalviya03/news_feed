@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:news_feed/Category/Provider/category_provider.dart';
-import 'package:news_feed/Location/Provider/location_provider.dart';
-import 'Search/search_provider.dart';
-import 'networkApis/connectivity_provider.dart';
-import 'Home/home_page.dart';
-import 'News/Provider/newsProvider.dart';
+import 'package:news_feed/Providers/category_provider.dart';
+import 'package:news_feed/Providers/location_provider.dart';
+import 'Providers/search_provider.dart';
+import 'Providers/connectivity_provider.dart';
+import 'Views/home_page.dart';
+import 'Providers/newsProvider.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   runApp(const NewsFeedApp());
 }
+
+//Project is structured on the basis of UI
 
 class NewsFeedApp extends StatelessWidget {
   const NewsFeedApp({Key? key}) : super(key: key);

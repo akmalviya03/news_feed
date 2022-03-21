@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../Utility/constants.dart';
-import '../Provider/location_provider.dart';
+import '../Constants/constants.dart';
+import '../Providers/location_provider.dart';
 
 class SelectLocationBottomSheetUI {
   Widget showSelectLocationBottomSheet() {

@@ -1,4 +1,4 @@
-import 'package:news_feed/News/newsModels/source_model.dart';
+import 'package:news_feed/Models/source_model.dart';
 class Articles {
 
   Source? _source;

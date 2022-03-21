@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../Utility/constants.dart';
+import '../Constants/constants.dart';
 class LocationProvider with ChangeNotifier {
   String? val = countries[0]['val'];
   String? currentCountry=countries[0]['location'];

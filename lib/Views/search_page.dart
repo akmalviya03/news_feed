@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:news_feed/Home/home_page.dart';
-import 'package:news_feed/News/newsModels/articles_model.dart';
-import 'package:news_feed/Search/search_provider.dart';
-import 'package:news_feed/Shared/text_field_search.dart';
+import 'package:news_feed/Views/home_page.dart';
+import 'package:news_feed/Models/articles_model.dart';
+import 'package:news_feed/Providers/search_provider.dart';
+import 'package:news_feed/Components/text_field_search.dart';
 import 'package:provider/provider.dart';
-import '../News/Provider/newsProvider.dart';
-import '../News/UI/news_card.dart';
-import '../center_text.dart';
+import '../Providers/newsProvider.dart';
+import '../Components/news_card.dart';
+import '../Components/center_text.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);

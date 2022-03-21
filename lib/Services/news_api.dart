@@ -1,7 +1,7 @@
-import 'package:news_feed/networkApis/search_api.dart';
-import 'package:news_feed/Utility/constants.dart';
-import '../Utility/api_keys.dart';
-import '../News/newsModels/news_list_model.dart';
+import 'package:news_feed/Services/search_api.dart';
+import 'package:news_feed/Constants/constants.dart';
+import '../Constants/api_keys.dart';
+import '../Models/news_list_model.dart';
 
 class NewsApi {
   Future getCountryNews(
