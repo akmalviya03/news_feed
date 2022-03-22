@@ -48,6 +48,7 @@ class _HomePageState extends State<HomePage> {
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
   Future getNews() async {
+    _retryProvider.resetRetryHomePage();
     await _newsApi
         .getCountryNews(
             countryName: _locationProvider.val!,
@@ -58,6 +59,7 @@ class _HomePageState extends State<HomePage> {
       _newsProvider.setTotalArticles(newsListModel.totalResults);
       return value;
     }, onError: (error) {
+      _retryProvider.changeRetryHome();
       return error;
     });
     scrollToTop();
@@ -105,8 +107,7 @@ class _HomePageState extends State<HomePage> {
     _locationProvider = Provider.of<LocationProvider>(context, listen: false);
     _newsProvider = Provider.of<NewsProvider>(context, listen: false);
     _categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
-    _retryProvider =
-        Provider.of<RetryProvider>(context, listen: false);
+    _retryProvider = Provider.of<RetryProvider>(context, listen: false);
     _controller = ScrollController()..addListener(_scrollListener);
     initConnectivity();
     _connectivitySubscription =
@@ -270,19 +271,56 @@ class _HomePageState extends State<HomePage> {
                           builder: (context, newsProvider, child) {
                             return Column(
                               children: [
-                                Expanded(
-                                  child: newsProvider.articles!.isNotEmpty
-                                      ? NewsList(
-                                          controller: _controller,
-                                        )
-                                      : const CenterText(
-                                          text: 'OOPS! We ran out of articles',
-                                        ),
-                                ),
-                                Consumer<RetryProvider>(builder:
-                                    (context, retryProvider, child) {
-                                  if (retryProvider.retryPagination ==
-                                      false) {
+                                Consumer<RetryProvider>(
+                                    builder: (context, retryProvider, child) {
+                                      if(retryProvider.retryHomePage == false){
+                                        return Expanded(
+                                          child: newsProvider.articles!.isNotEmpty
+                                              ? NewsList(
+                                            controller: _controller,
+                                          )
+                                              : const CenterText(
+                                            text:
+                                            'OOPS! We ran out of articles',
+                                          ),
+                                        );
+                                      }else{
+                                        return Expanded(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'No Internet Connection',
+                                                style: GoogleFonts
+                                                    .montserrat(),
+                                              ),
+                                              ElevatedButton(
+                                                  style: ButtonStyle(
+                                                      backgroundColor:
+                                                      MaterialStateProperty
+                                                          .all(Theme.of(
+                                                          context)
+                                                          .primaryColor)),
+                                                  onPressed: () {
+                                                      if (internetWorking == true) {
+                                                        _future = getNews();
+                                                      }
+                                                  },
+                                                  child: Text(
+                                                    'Retry',
+                                                    style: GoogleFonts
+                                                        .montserrat(),
+                                                  ))
+                                            ],
+                                          ),
+                                        );
+                                      }
+
+                                }),
+                                Consumer<RetryProvider>(
+                                    builder: (context, retryProvider, child) {
+                                  if (retryProvider.retryPagination == false) {
                                     return Visibility(
                                       visible: newsProvider.fetchingMore,
                                       child: const CircularProgressIndicator(),
