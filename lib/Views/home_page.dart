@@ -47,6 +47,35 @@ class _HomePageState extends State<HomePage> {
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
+  @override
+  void initState() {
+    super.initState();
+    _locationProvider = Provider.of<LocationProvider>(context, listen: false);
+    _newsProvider = Provider.of<NewsProvider>(context, listen: false);
+    _categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
+    _retryProvider = Provider.of<RetryProvider>(context, listen: false);
+    _controller = ScrollController()..addListener(_scrollListener);
+    initConnectivity();
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+    _future = getNews();
+  }
+
+  Future<void> initConnectivity() async {
+    late ConnectivityResult result;
+    try {
+      result = await _connectivity.checkConnectivity();
+    } on PlatformException {
+      return;
+    }
+
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
   Future getNews() async {
     _retryProvider.resetRetryHomePage();
     await _newsApi
@@ -65,22 +94,17 @@ class _HomePageState extends State<HomePage> {
     scrollToTop();
   }
 
-  Future<void> scrollToTop() {
-    return _controller.animateTo(_controller.position.minScrollExtent,
-        duration: const Duration(milliseconds: 400), curve: Curves.easeIn);
-  }
-
   Future loadMoreNews() async {
     if (((_newsProvider.totalArticles)! >
-            (_newsProvider.totalArticlesInList)) &&
+        (_newsProvider.totalArticlesInList)) &&
         _newsProvider.fetchingMore == false) {
       _newsProvider.fetching();
       _retryProvider.resetRetryPagination();
       await _newsApi
           .getCountryNews(
-              page: _newsProvider.currentPage,
-              categoryName: _categoryProvider.selectedCategory,
-              countryName: _locationProvider.val!)
+          page: _newsProvider.currentPage,
+          categoryName: _categoryProvider.selectedCategory,
+          countryName: _locationProvider.val!)
           .then((value) {
         newsListModel = value as NewsListModel;
         _newsProvider.addMoreArticlesToList(newsListModel.articles);
@@ -95,49 +119,15 @@ class _HomePageState extends State<HomePage> {
     return Future.value('We are having some issues while fetching data');
   }
 
+  Future<void> scrollToTop() {
+    return _controller.animateTo(_controller.position.minScrollExtent,
+        duration: const Duration(milliseconds: 400), curve: Curves.easeIn);
+  }
+
   void _scrollListener() {
     if (_controller.position.extentAfter == 0) {
       loadMoreNews();
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _locationProvider = Provider.of<LocationProvider>(context, listen: false);
-    _newsProvider = Provider.of<NewsProvider>(context, listen: false);
-    _categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
-    _retryProvider = Provider.of<RetryProvider>(context, listen: false);
-    _controller = ScrollController()..addListener(_scrollListener);
-    initConnectivity();
-    _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-    _future = getNews();
-  }
-
-  @override
-  void dispose() {
-    _connectivitySubscription.cancel();
-    _controller.dispose();
-    _newsProvider.dispose();
-    _categoryProvider.dispose();
-    _locationProvider.dispose();
-    super.dispose();
-  }
-
-  Future<void> initConnectivity() async {
-    late ConnectivityResult result;
-    try {
-      result = await _connectivity.checkConnectivity();
-    } on PlatformException {
-      return;
-    }
-
-    if (!mounted) {
-      return Future.value(null);
-    }
-
-    return _updateConnectionStatus(result);
   }
 
   void showScaffold() {
@@ -172,6 +162,16 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    _controller.dispose();
+    _newsProvider.dispose();
+    _categoryProvider.dispose();
+    _locationProvider.dispose();
+    _retryProvider.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
