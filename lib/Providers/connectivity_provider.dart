@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ConnectivityProvider with ChangeNotifier {
+class RetryProvider with ChangeNotifier {
    bool retryPagination = false;
   void resetRetryPagination(){
     retryPagination = false;

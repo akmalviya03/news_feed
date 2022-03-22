@@ -31,24 +31,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final NewsApi _newsApi = NewsApi();
-
   late Future _future;
   late ScrollController _controller;
   late NewsListModel newsListModel;
-
   bool internetWorking = true;
-
   late final LocationProvider _locationProvider;
   late final NewsProvider _newsProvider;
   late final CategoryProvider _categoryProvider;
-  late final ConnectivityProvider _connectivityProvider;
+  late final RetryProvider _retryProvider;
   final BottomSheetMethods _bottomSheetMethods = BottomSheetMethods();
-
   final SelectLocationBottomSheetUI _selectLocationBottomSheetUI =
       SelectLocationBottomSheetUI();
   final SelectCategoryBottomSheetUI _selectCategoryBottomSheetUI =
       SelectCategoryBottomSheetUI();
-
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
@@ -78,7 +73,7 @@ class _HomePageState extends State<HomePage> {
             (_newsProvider.totalArticlesInList)) &&
         _newsProvider.fetchingMore == false) {
       _newsProvider.fetching();
-      _connectivityProvider.resetRetryPagination();
+      _retryProvider.resetRetryPagination();
       await _newsApi
           .getCountryNews(
               page: _newsProvider.currentPage,
@@ -91,7 +86,7 @@ class _HomePageState extends State<HomePage> {
         return Future.value(value);
       }, onError: (error) {
         _newsProvider.fetchingDone();
-        _connectivityProvider.changeRetryPagination();
+        _retryProvider.changeRetryPagination();
         return Future.error(error);
       });
     }
@@ -110,8 +105,8 @@ class _HomePageState extends State<HomePage> {
     _locationProvider = Provider.of<LocationProvider>(context, listen: false);
     _newsProvider = Provider.of<NewsProvider>(context, listen: false);
     _categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
-    _connectivityProvider =
-        Provider.of<ConnectivityProvider>(context, listen: false);
+    _retryProvider =
+        Provider.of<RetryProvider>(context, listen: false);
     _controller = ScrollController()..addListener(_scrollListener);
     initConnectivity();
     _connectivitySubscription =
@@ -284,9 +279,9 @@ class _HomePageState extends State<HomePage> {
                                           text: 'OOPS! We ran out of articles',
                                         ),
                                 ),
-                                Consumer<ConnectivityProvider>(builder:
-                                    (context, connectivityProvider, child) {
-                                  if (connectivityProvider.retryPagination ==
+                                Consumer<RetryProvider>(builder:
+                                    (context, retryProvider, child) {
+                                  if (retryProvider.retryPagination ==
                                       false) {
                                     return Visibility(
                                       visible: newsProvider.fetchingMore,
