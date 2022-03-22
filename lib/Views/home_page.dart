@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:news_feed/Providers/category_provider.dart';
-import 'package:news_feed/Providers/connectivity_provider.dart';
 import 'package:news_feed/Views/search_page.dart';
 import 'package:news_feed/Components/bottom_sheet_methods.dart';
 import 'package:news_feed/Components/text_field_search.dart';

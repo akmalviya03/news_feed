@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:news_feed/Providers/category_provider.dart';
 import 'package:news_feed/Providers/location_provider.dart';
 import 'Providers/search_provider.dart';
-import 'Providers/connectivity_provider.dart';
+import 'Providers/retry_provider.dart';
 import 'Views/home_page.dart';
 import 'Providers/newsProvider.dart';
 import 'package:provider/provider.dart';
