@@ -15,6 +15,7 @@ import '../Components/center_text.dart';
 import '../Constants/constants.dart';
 import '../Providers/location_provider.dart';
 import '../Components/location_button.dart';
+import '../Providers/retry_provider.dart';
 import '../Services/news_api.dart';
 import '../Models/news_list_model.dart';
 import '../Providers/newsProvider.dart';
