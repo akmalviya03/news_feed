@@ -271,22 +271,20 @@ class _HomePageState extends State<HomePage> {
                           builder: (context, newsProvider, child) {
                             return Column(
                               children: [
-                                Consumer<RetryProvider>(
-                                    builder: (context, retryProvider, child) {
-                                      if(retryProvider.retryHomePage == false){
-                                        return Expanded(
-                                          child: newsProvider.articles!.isNotEmpty
+                                Expanded(
+                                  child: Consumer<RetryProvider>(
+                                      builder: (context, retryProvider, child) {
+                                        if(retryProvider.retryHomePage == false){
+                                          return newsProvider.articles!.isNotEmpty
                                               ? NewsList(
                                             controller: _controller,
                                           )
                                               : const CenterText(
                                             text:
                                             'OOPS! We ran out of articles',
-                                          ),
-                                        );
-                                      }else{
-                                        return Expanded(
-                                          child: Column(
+                                          );
+                                        }else{
+                                          return Column(
                                             mainAxisAlignment:
                                             MainAxisAlignment.center,
                                             children: [
@@ -313,11 +311,11 @@ class _HomePageState extends State<HomePage> {
                                                         .montserrat(),
                                                   ))
                                             ],
-                                          ),
-                                        );
-                                      }
+                                          );
+                                        }
 
-                                }),
+                                  }),
+                                ),
                                 Consumer<RetryProvider>(
                                     builder: (context, retryProvider, child) {
                                   if (retryProvider.retryPagination == false) {
