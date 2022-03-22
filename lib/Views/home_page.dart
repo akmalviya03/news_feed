@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:news_feed/Providers/category_provider.dart';
+import 'package:news_feed/Providers/connectivity_provider.dart';
 import 'package:news_feed/Views/search_page.dart';
 import 'package:news_feed/Components/bottom_sheet_methods.dart';
 import 'package:news_feed/Components/text_field_search.dart';
@@ -12,7 +13,6 @@ import 'package:provider/provider.dart';
 import '../Components/select_category_bottomsheet_ui.dart';
 import '../Components/select_location_bottomsheet_ui.dart';
 import '../Components/center_text.dart';
-import '../Providers/connectivity_provider.dart';
 import '../Constants/constants.dart';
 import '../Providers/location_provider.dart';
 import '../Components/location_button.dart';
@@ -36,12 +36,14 @@ class _HomePageState extends State<HomePage> {
   late ScrollController _controller;
   late NewsListModel newsListModel;
 
+  bool internetWorking = true;
+
   late final LocationProvider _locationProvider;
-  late final ConnectivityProvider _connectivityProvider;
   late final NewsProvider _newsProvider;
   late final CategoryProvider _categoryProvider;
-
+  late final ConnectivityProvider _connectivityProvider;
   final BottomSheetMethods _bottomSheetMethods = BottomSheetMethods();
+
   final SelectLocationBottomSheetUI _selectLocationBottomSheetUI =
       SelectLocationBottomSheetUI();
   final SelectCategoryBottomSheetUI _selectCategoryBottomSheetUI =
@@ -74,8 +76,9 @@ class _HomePageState extends State<HomePage> {
   Future loadMoreNews() async {
     if (((_newsProvider.totalArticles)! >
             (_newsProvider.totalArticlesInList)) &&
-        _newsProvider.fetchMore != true) {
+        _newsProvider.fetchingMore == false) {
       _newsProvider.fetching();
+      _connectivityProvider.resetRetryPagination();
       await _newsApi
           .getCountryNews(
               page: _newsProvider.currentPage,
@@ -85,17 +88,18 @@ class _HomePageState extends State<HomePage> {
         newsListModel = value as NewsListModel;
         _newsProvider.addMoreArticlesToList(newsListModel.articles);
         _newsProvider.fetchingDone();
-        return value;
+        return Future.value(value);
       }, onError: (error) {
-        return error;
+        _newsProvider.fetchingDone();
+        _connectivityProvider.changeRetryPagination();
+        return Future.error(error);
       });
     }
     return Future.value('We are having some issues while fetching data');
   }
 
   void _scrollListener() {
-    if (_controller.position.extentAfter == 0 &&
-        _newsProvider.fetchMore != true) {
+    if (_controller.position.extentAfter == 0) {
       loadMoreNews();
     }
   }
@@ -122,7 +126,6 @@ class _HomePageState extends State<HomePage> {
     _newsProvider.dispose();
     _categoryProvider.dispose();
     _locationProvider.dispose();
-    _connectivityProvider.dispose();
     super.dispose();
   }
 
@@ -141,195 +144,184 @@ class _HomePageState extends State<HomePage> {
     return _updateConnectionStatus(result);
   }
 
+  void showScaffold() {
+    internetWorking = false;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: const Text('No Internet Connection'),
+      duration: const Duration(days: 1),
+      action: SnackBarAction(
+          label: 'Dismiss',
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          }),
+    ));
+  }
+
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    bool prevConnectedValue = _connectivityProvider.connected;
     if (result == ConnectivityResult.mobile ||
         result == ConnectivityResult.wifi) {
       try {
         final result = await InternetAddress.lookup('example.com');
-        var res = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-        _connectivityProvider.setPrevConnectivity(prevConnectedValue);
-        _connectivityProvider.setConnectivity(res);
+        bool res = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+        if (res) {
+          internetWorking = true;
+          ScaffoldMessenger.of(context).clearSnackBars();
+        }
       } on SocketException catch (_) {
-        setState(() {
-          _connectivityProvider.setPrevConnectivity(prevConnectedValue);
-          _connectivityProvider.setConnectivity(false);
-        });
+        showScaffold();
       }
     } else {
-      _connectivityProvider.setPrevConnectivity(prevConnectedValue);
-      _connectivityProvider.setConnectivity(false);
+      ScaffoldMessenger.of(context).clearSnackBars();
+      showScaffold();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        title: Text(
-          'MyNEWS',
-          style: GoogleFonts.montserrat(
-              color: Colors.white,
-              fontSize: MediaQuery.of(context).size.width * 0.04),
-        ),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              _bottomSheetMethods.showCustomBottomSheet(
-                  context: context,
-                  childList: _selectLocationBottomSheetUI
-                      .showSelectLocationBottomSheet(),
-                  heading: 'Choose your Location',
-                  applyFilter: () {
-                    Navigator.pop(context);
-                    _locationProvider.setCountry(countries[countries.indexWhere(
-                            (element) =>
-                                element['val'] == _locationProvider.val!)]
-                        ['location']!);
-                    _categoryProvider.resetSelectedCategory();
-                    _future = getNews();
-                  });
-            },
-            child: const LocationButton(),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          title: Text(
+            'MyNEWS',
+            style: GoogleFonts.montserrat(
+                color: Colors.white,
+                fontSize: MediaQuery.of(context).size.width * 0.04),
           ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).primaryColor,
-        onPressed: () {
-          _bottomSheetMethods.showCustomBottomSheet(
-            heading: 'Filter by categories',
-            applyFilter: () {
-              Navigator.pop(context);
-              _future = getNews();
-            },
-            context: context,
-            childList:
-                _selectCategoryBottomSheetUI.showSelectCategoryBottomSheet(),
-          );
-        },
-        child: const Icon(Icons.filter_alt_outlined),
-      ),
-      body: Consumer<ConnectivityProvider>(
-        builder: (context, connectivityProvider, child) {
-          if (connectivityProvider.connected == true) {
-            return SafeArea(
-              child: Column(
-                children: [
-                  GestureDetector(
-                      onTap: () {
-                        if (kDebugMode) {
-                          print('Hello');
-                        }
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const SearchPage()));
-                      },
-                      child: Hero(
-                          tag: 'Search',
-                          child: TextFieldSearch(
-                            enabled: false,
-                            callback: (string) {},
-                          ))),
-                  //Top Headlines
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.04,
-                          right: MediaQuery.of(context).size.width * 0.04,
-                          bottom: MediaQuery.of(context).size.width * 0.04),
-                      child: Text(
-                        'Top Headlines',
-                        style: GoogleFonts.montserrat(
-                          color: Theme.of(context).primaryColorDark,
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+          actions: [
+            GestureDetector(
+              onTap: () {
+                _bottomSheetMethods.showCustomBottomSheet(
+                    context: context,
+                    childList: _selectLocationBottomSheetUI
+                        .showSelectLocationBottomSheet(),
+                    heading: 'Choose your Location',
+                    applyFilter: () {
+                      Navigator.pop(context);
+                      _locationProvider.setCountry(countries[
+                              countries.indexWhere((element) =>
+                                  element['val'] == _locationProvider.val!)]
+                          ['location']!);
+                      _categoryProvider.resetSelectedCategory();
+                      _future = getNews();
+                    });
+              },
+              child: const LocationButton(),
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Theme.of(context).primaryColor,
+          onPressed: () {
+            _bottomSheetMethods.showCustomBottomSheet(
+              heading: 'Filter by categories',
+              applyFilter: () {
+                Navigator.pop(context);
+                _future = getNews();
+              },
+              context: context,
+              childList:
+                  _selectCategoryBottomSheetUI.showSelectCategoryBottomSheet(),
+            );
+          },
+          child: const Icon(Icons.filter_alt_outlined),
+        ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              GestureDetector(
+                  onTap: () {
+                    if (kDebugMode) {
+                      print('Hello');
+                    }
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const SearchPage()));
+                  },
+                  child: Hero(
+                      tag: 'Search',
+                      child: TextFieldSearch(
+                        enabled: false,
+                        callback: (string) {},
+                      ))),
+
+              //Top Headlines
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.04,
+                      right: MediaQuery.of(context).size.width * 0.04,
+                      bottom: MediaQuery.of(context).size.width * 0.04),
+                  child: Text(
+                    'Top Headlines',
+                    style: GoogleFonts.montserrat(
+                      color: Theme.of(context).primaryColorDark,
+                      fontSize: MediaQuery.of(context).size.width * 0.04,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                ),
+              ),
 
-                  Expanded(
-                    child: FutureBuilder(
-                        future: _future,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.connectionState ==
-                              ConnectionState.done) {
+              Expanded(
+                child: FutureBuilder(
+                    future: _future,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.done) {
+                        return Consumer<NewsProvider>(
+                          builder: (context, newsProvider, child) {
                             return Column(
                               children: [
                                 Expanded(
-                                  child: _newsProvider.articles!.isNotEmpty
+                                  child: newsProvider.articles!.isNotEmpty
                                       ? NewsList(
                                           controller: _controller,
                                         )
-                                      : connectivityProvider.prevConnected ==
-                                              false
-                                          ? Center(
-                                              child: Center(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    'No Internet Connection',
-                                                    style: GoogleFonts
-                                                        .montserrat(),
-                                                  ),
-                                                  ElevatedButton(
-                                                      style: ButtonStyle(
-                                                          backgroundColor:
-                                                              MaterialStateProperty
-                                                                  .all(Theme.of(
-                                                                          context)
-                                                                      .primaryColor)),
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          _future = getNews();
-                                                        });
-                                                      },
-                                                      child: Text(
-                                                        'Retry',
-                                                        style: GoogleFonts
-                                                            .montserrat(),
-                                                      ))
-                                                ],
-                                              ),
-                                            ))
-                                          : const CenterText(
-                                              text:
-                                                  'OOPS! We ran out of articles',
-                                            ),
+                                      : const CenterText(
+                                          text: 'OOPS! We ran out of articles',
+                                        ),
                                 ),
-                                Consumer<NewsProvider>(
-                                  builder: (context, newsProvider, child) {
+                                Consumer<ConnectivityProvider>(builder:
+                                    (context, connectivityProvider, child) {
+                                  if (connectivityProvider.retryPagination ==
+                                      false) {
                                     return Visibility(
-                                        visible: newsProvider.fetchMore,
-                                        child:
-                                            const CircularProgressIndicator());
-                                  },
-                                )
+                                      visible: newsProvider.fetchingMore,
+                                      child: const CircularProgressIndicator(),
+                                    );
+                                  } else {
+                                    return TextButton(
+                                        style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    Theme.of(context)
+                                                        .primaryColor)),
+                                        onPressed: () {
+                                          if (internetWorking == true) {
+                                            _future = loadMoreNews();
+                                          }
+                                        },
+                                        child: Text(
+                                          'Load More Articles',
+                                          style: GoogleFonts.montserrat(
+                                              color: Colors.white),
+                                        ));
+                                  }
+                                })
                               ],
                             );
-                          } else {
-                            return CenterText(text: snapshot.error.toString());
-                          }
-                        }),
-                  )
-                ],
-              ),
-            );
-          } else {
-            return const CenterText(
-                text: 'OOPS! You are not connected to the internet');
-          }
-        },
-      ),
-    );
+                          },
+                        );
+                      } else {
+                        return CenterText(text: snapshot.error.toString());
+                      }
+                    }),
+              )
+            ],
+          ),
+        ));
   }
 }

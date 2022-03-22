@@ -12,7 +12,7 @@ class NewsProvider with ChangeNotifier {
   int get currentPage => _currentPage;
   int get totalArticlesInList => _totalArticlesInList;
   List<Articles>? get articles => _articles;
-  bool get fetchMore => _fetchMore;
+  bool get fetchingMore => _fetchMore;
 
   void initializeArticlesList(List<Articles>? _articlesFromHome) {
     resetCurrentPage();

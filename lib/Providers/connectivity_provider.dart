@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 
 class ConnectivityProvider with ChangeNotifier {
-   bool connected = true;
-   bool prevConnected =false;
-  void setConnectivity(bool newConnectedResult){
-    connected = newConnectedResult;
+   bool retryPagination = false;
+  void resetRetryPagination(){
+    retryPagination = false;
     notifyListeners();
   }
 
-   void setPrevConnectivity(bool newPrevConnectedResult){
-     prevConnected = newPrevConnectedResult;
-     notifyListeners();
-   }
-
+  void changeRetryPagination(){
+    retryPagination =true;
+    notifyListeners();
+  }
 
 }
