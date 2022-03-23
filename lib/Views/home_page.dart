@@ -83,11 +83,16 @@ class _HomePageState extends State<HomePage> {
             countryName: _locationProvider.val!,
             categoryName: _categoryProvider.selectedCategory)
         .then((value) {
-      newsListModel = value as NewsListModel;
-      _newsProvider.initializeArticlesList(newsListModel.articles);
-      _newsProvider.setTotalArticles(newsListModel.totalResults);
+          if(value.runtimeType == NewsListModel){
+            newsListModel = value;
+            _newsProvider.initializeArticlesList(newsListModel.articles);
+            _newsProvider.setTotalArticles(newsListModel.totalResults);
+          }
       return value;
     }, onError: (error) {
+      if (kDebugMode) {
+        print(error.toString()+"Some GetNews");
+      }
       _retryProvider.changeRetryHome();
       return error;
     });
@@ -106,14 +111,20 @@ class _HomePageState extends State<HomePage> {
           categoryName: _categoryProvider.selectedCategory,
           countryName: _locationProvider.val!)
           .then((value) {
-        newsListModel = value as NewsListModel;
-        _newsProvider.addMoreArticlesToList(newsListModel.articles);
-        _newsProvider.fetchingDone();
-        return Future.value(value);
+            if(value.runtimeType == NewsListModel){
+              newsListModel = value;
+              _newsProvider.addMoreArticlesToList(newsListModel.articles);
+              _newsProvider.fetchingDone();
+            }
+
+        return value;
       }, onError: (error) {
+            if (kDebugMode) {
+              print(error.toString()+"Some LoadMoreNews");
+            }
         _newsProvider.fetchingDone();
         _retryProvider.changeRetryPagination();
-        return Future.error(error);
+        return error;
       });
     }
     return Future.value('We are having some issues while fetching data');
