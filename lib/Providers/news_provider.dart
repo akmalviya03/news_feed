@@ -40,7 +40,7 @@ class NewsProvider with ChangeNotifier {
       SelectLocationBottomSheetUI();
   final SelectCategoryBottomSheetUI _selectCategoryBottomSheetUI =
       SelectCategoryBottomSheetUI();
-  
+
   late BuildContext _context;
   late Future future;
   bool internetWorking = true;
