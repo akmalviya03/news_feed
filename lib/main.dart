@@ -32,7 +32,7 @@ class NewsFeedApp extends StatelessWidget {
           scaffoldBackgroundColor: const Color(0xffF5F9FD),
           backgroundColor: const Color(0xFFCED3DC),
         ),
-        home: const HomePage(),
+        home: HomePage(),
       ),
     );
   }

@@ -1,190 +1,24 @@
-import 'dart:async';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:news_feed/Providers/category_provider.dart';
 import 'package:news_feed/Views/search_page.dart';
-import 'package:news_feed/Components/bottom_sheet_methods.dart';
 import 'package:news_feed/Components/text_field_search.dart';
 import 'package:provider/provider.dart';
-import '../Components/select_category_bottomsheet_ui.dart';
-import '../Components/select_location_bottomsheet_ui.dart';
 import '../Components/center_text.dart';
-import '../Constants/constants.dart';
-import '../Providers/location_provider.dart';
 import '../Components/location_button.dart';
 import '../Providers/retry_provider.dart';
-import '../Services/news_api.dart';
-import '../Models/news_list_model.dart';
 import '../Providers/news_provider.dart';
 import '../Components/news_list.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomePage extends StatelessWidget {
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
+  late NewsProvider _newsProvider;
+  HomePage({Key? key}) : super(key: key);
 
-class _HomePageState extends State<HomePage> {
-  final NewsApi _newsApi = NewsApi();
-  late Future _future;
-  late ScrollController _controller;
-  late NewsListModel newsListModel;
-  bool internetWorking = true;
-  late final LocationProvider _locationProvider;
-  late final NewsProvider _newsProvider;
-  late final CategoryProvider _categoryProvider;
-  late final RetryProvider _retryProvider;
-  final BottomSheetMethods _bottomSheetMethods = BottomSheetMethods();
-  final SelectLocationBottomSheetUI _selectLocationBottomSheetUI =
-      SelectLocationBottomSheetUI();
-  final SelectCategoryBottomSheetUI _selectCategoryBottomSheetUI =
-      SelectCategoryBottomSheetUI();
-  final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
-
-  @override
-  void initState() {
-    super.initState();
-    _locationProvider = Provider.of<LocationProvider>(context, listen: false);
-    _newsProvider = Provider.of<NewsProvider>(context, listen: false);
-    _categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
-    _retryProvider = Provider.of<RetryProvider>(context, listen: false);
-    _controller = ScrollController()..addListener(_scrollListener);
-    initConnectivity();
-    _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-    _future = getNews();
-  }
-
-  Future<void> initConnectivity() async {
-    late ConnectivityResult result;
-    try {
-      result = await _connectivity.checkConnectivity();
-    } on PlatformException {
-      return;
-    }
-
-    if (!mounted) {
-      return Future.value(null);
-    }
-
-    return _updateConnectionStatus(result);
-  }
-
-  Future getNews() async {
-    _retryProvider.resetRetryHomePage();
-    await _newsApi
-        .getCountryNews(
-            countryName: _locationProvider.val!,
-            categoryName: _categoryProvider.selectedCategory)
-        .then((value) {
-          if(value.runtimeType == NewsListModel){
-            newsListModel = value;
-            _newsProvider.initializeArticlesList(newsListModel.articles);
-            _newsProvider.setTotalArticles(newsListModel.totalResults);
-          }
-      return value;
-    }, onError: (error) {
-      if (kDebugMode) {
-        print(error.toString()+"Some GetNews");
-      }
-      _retryProvider.changeRetryHome();
-      return error;
-    });
-    scrollToTop();
-  }
-
-  Future loadMoreNews() async {
-    if (((_newsProvider.totalArticles)! >
-        (_newsProvider.totalArticlesInList)) &&
-        _newsProvider.fetchingMore == false) {
-      _newsProvider.fetching();
-      _retryProvider.resetRetryPagination();
-      await _newsApi
-          .getCountryNews(
-          page: _newsProvider.currentPage,
-          categoryName: _categoryProvider.selectedCategory,
-          countryName: _locationProvider.val!)
-          .then((value) {
-            if(value.runtimeType == NewsListModel){
-              newsListModel = value;
-              _newsProvider.addMoreArticlesToList(newsListModel.articles);
-              _newsProvider.fetchingDone();
-            }
-
-        return value;
-      }, onError: (error) {
-            if (kDebugMode) {
-              print(error.toString()+"Some LoadMoreNews");
-            }
-        _newsProvider.fetchingDone();
-        _retryProvider.changeRetryPagination();
-        return error;
-      });
-    }
-    return Future.value('We are having some issues while fetching data');
-  }
-
-  Future<void> scrollToTop() {
-    return _controller.animateTo(_controller.position.minScrollExtent,
-        duration: const Duration(milliseconds: 400), curve: Curves.easeIn);
-  }
-
-  void _scrollListener() {
-    if (_controller.position.extentAfter == 0) {
-      loadMoreNews();
-    }
-  }
-
-  void showScaffold() {
-    internetWorking = false;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: const Text('No Internet Connection'),
-      duration: const Duration(days: 1),
-      action: SnackBarAction(
-          label: 'Dismiss',
-          onPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          }),
-    ));
-  }
-
-  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    if (result == ConnectivityResult.mobile ||
-        result == ConnectivityResult.wifi) {
-      try {
-        final result = await InternetAddress.lookup('example.com');
-        bool res = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-        if (res) {
-          internetWorking = true;
-          ScaffoldMessenger.of(context).clearSnackBars();
-        }
-      } on SocketException catch (_) {
-        showScaffold();
-      }
-    } else {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      showScaffold();
-    }
-  }
-
-  @override
-  void dispose() {
-    _connectivitySubscription.cancel();
-    _controller.dispose();
-    _newsProvider.dispose();
-    _categoryProvider.dispose();
-    _locationProvider.dispose();
-    _retryProvider.dispose();
-    super.dispose();
-  }
   @override
   Widget build(BuildContext context) {
+    _newsProvider = Provider.of<NewsProvider>(context, listen: false);
+    _newsProvider.initializeValues(context);
     return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
@@ -198,20 +32,7 @@ class _HomePageState extends State<HomePage> {
           actions: [
             GestureDetector(
               onTap: () {
-                _bottomSheetMethods.showCustomBottomSheet(
-                    context: context,
-                    childList: _selectLocationBottomSheetUI
-                        .showSelectLocationBottomSheet(),
-                    heading: 'Choose your Location',
-                    applyFilter: () {
-                      Navigator.pop(context);
-                      _locationProvider.setCountry(countries[
-                              countries.indexWhere((element) =>
-                                  element['val'] == _locationProvider.val!)]
-                          ['location']!);
-                      _categoryProvider.resetSelectedCategory();
-                      _future = getNews();
-                    });
+                _newsProvider.showSelectLocationBottomSheet();
               },
               child: const LocationButton(),
             ),
@@ -219,17 +40,8 @@ class _HomePageState extends State<HomePage> {
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).primaryColor,
-          onPressed: () {
-            _bottomSheetMethods.showCustomBottomSheet(
-              heading: 'Filter by categories',
-              applyFilter: () {
-                Navigator.pop(context);
-                _future = getNews();
-              },
-              context: context,
-              childList:
-                  _selectCategoryBottomSheetUI.showSelectCategoryBottomSheet(),
-            );
+          onPressed: (){
+            _newsProvider.showSelectCategoryBottomSheet();
           },
           child: const Icon(Icons.filter_alt_outlined),
         ),
@@ -272,7 +84,7 @@ class _HomePageState extends State<HomePage> {
 
               Expanded(
                 child: FutureBuilder(
-                    future: _future,
+                    future: _newsProvider.future,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -288,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                                         if(retryProvider.retryHomePage == false){
                                           return newsProvider.articles!.isNotEmpty
                                               ? NewsList(
-                                            controller: _controller,
+                                            controller: _newsProvider.controller,
                                           )
                                               : const CenterText(
                                             text:
@@ -312,8 +124,8 @@ class _HomePageState extends State<HomePage> {
                                                           context)
                                                           .primaryColor)),
                                                   onPressed: () {
-                                                      if (internetWorking == true) {
-                                                        _future = getNews();
+                                                      if (_newsProvider.internetWorking == true) {
+                                                        _newsProvider.future = _newsProvider.getNews();
                                                       }
                                                   },
                                                   child: Text(
@@ -342,8 +154,8 @@ class _HomePageState extends State<HomePage> {
                                                     Theme.of(context)
                                                         .primaryColor)),
                                         onPressed: () {
-                                          if (internetWorking == true) {
-                                            _future = loadMoreNews();
+                                          if (_newsProvider.internetWorking == true) {
+                                            _newsProvider.future = _newsProvider.loadMoreNews();
                                           }
                                         },
                                         child: Text(
