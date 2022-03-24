@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,35 +21,26 @@ class NewsProvider with ChangeNotifier {
   int _currentPage = 1;
   List<Articles>? _articles = [];
   int _totalArticlesInList = 0;
-  bool _fetchMore = false;
+  bool _fetchingMore = false;
 
-  int? get totalArticles => _totalArticles;
-  int get currentPage => _currentPage;
-  int get totalArticlesInList => _totalArticlesInList;
   List<Articles>? get articles => _articles;
-  bool get fetchingMore => _fetchMore;
+  bool get fetchingMore => _fetchingMore;
 
-  late  LocationProvider _locationProvider;
-  late  CategoryProvider _categoryProvider;
-  late  RetryProvider _retryProvider;
-
-  CategoryProvider get categoryProvider => _categoryProvider;
-
-  RetryProvider get retryProvider => _retryProvider;
-
-  LocationProvider get locationProvider => _locationProvider;
+  late LocationProvider _locationProvider;
+  late CategoryProvider _categoryProvider;
+  late RetryProvider _retryProvider;
 
   late ScrollController _controller;
-
   ScrollController get controller => _controller;
 
   final NewsApi _newsApi = NewsApi();
   late NewsListModel _newsListModel;
   final BottomSheetMethods _bottomSheetMethods = BottomSheetMethods();
   final SelectLocationBottomSheetUI _selectLocationBottomSheetUI =
-  SelectLocationBottomSheetUI();
+      SelectLocationBottomSheetUI();
   final SelectCategoryBottomSheetUI _selectCategoryBottomSheetUI =
-  SelectCategoryBottomSheetUI();
+      SelectCategoryBottomSheetUI();
+  
   late BuildContext _context;
   late Future future;
   bool internetWorking = true;
@@ -58,7 +48,7 @@ class NewsProvider with ChangeNotifier {
 
   NewsProvider();
 
-   initializeValues(BuildContext context){
+  initializeValues(BuildContext context) {
     _context = context;
     _locationProvider = Provider.of<LocationProvider>(context, listen: false);
     _categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
@@ -69,52 +59,39 @@ class NewsProvider with ChangeNotifier {
     future = getNews();
   }
 
-  Future showSelectLocationBottomSheet(){
-    return _bottomSheetMethods.showCustomBottomSheet(
-        context: _context,
-        childList: _selectLocationBottomSheetUI.showSelectLocationBottomSheet(),
-        heading: 'Choose your Location',
-        applyFilter: () {
-          Navigator.pop(_context);
-          _locationProvider.setCountry(countries[
-          countries.indexWhere((element) =>
-          element['val'] == _locationProvider.val!)]
-          ['location']!);
-          _categoryProvider.resetSelectedCategory();
-          future = getNews();
-        });
+  void initializeArticlesList(List<Articles>? _articlesFromHome) {
+    resetCurrentPage();
+    _articles = [];
+    _articles = _articlesFromHome;
+    _totalArticlesInList = _articles!.length;
+    incrementCurrentPage();
+    notifyListeners();
   }
 
-  Future showSelectCategoryBottomSheet(){
-    return _bottomSheetMethods.showCustomBottomSheet(
-      heading: 'Filter by categories',
-      applyFilter: () {
-        Navigator.pop(_context);
-        future = getNews();
-      },
-      context: _context,
-      childList:
-      _selectCategoryBottomSheetUI.showSelectCategoryBottomSheet(),
-    );
+  void setTotalArticles(int? value) {
+    _totalArticles = value;
+    notifyListeners();
   }
 
   Future<void> scrollToTop() {
     return _controller.animateTo(_controller.position.minScrollExtent,
         duration: const Duration(milliseconds: 400), curve: Curves.easeIn);
   }
+
   void _scrollListener() {
     if (_controller.position.extentAfter == 0) {
       loadMoreNews();
     }
   }
+
   Future getNews() async {
-    retryProvider.resetRetryHomePage();
+    _retryProvider.resetRetryHomePage();
     await _newsApi
         .getCountryNews(
-        countryName: locationProvider.val!,
-        categoryName: categoryProvider.selectedCategory)
+            countryName: _locationProvider.val!,
+            categoryName: _categoryProvider.selectedCategory)
         .then((value) {
-      if(value.runtimeType == NewsListModel){
+      if (value.runtimeType == NewsListModel) {
         _newsListModel = value;
         initializeArticlesList(_newsListModel.articles);
         setTotalArticles(_newsListModel.totalResults);
@@ -122,27 +99,26 @@ class NewsProvider with ChangeNotifier {
       return value;
     }, onError: (error) {
       if (kDebugMode) {
-        print(error.toString()+"Some GetNews");
+        print(error.toString() + "Some GetNews");
       }
-      retryProvider.changeRetryHome();
+      _retryProvider.changeRetryHome();
       return error;
     });
     scrollToTop();
   }
 
   Future loadMoreNews() async {
-    if (((totalArticles)! >
-        (totalArticlesInList)) &&
-        fetchingMore == false) {
+    if (((_totalArticles)! > (_totalArticlesInList)) &&
+        _fetchingMore == false) {
       fetching();
-      retryProvider.resetRetryPagination();
+      _retryProvider.resetRetryPagination();
       await _newsApi
           .getCountryNews(
-          page: currentPage,
-          categoryName: categoryProvider.selectedCategory,
-          countryName: locationProvider.val!)
+              page: _currentPage,
+              categoryName: _categoryProvider.selectedCategory,
+              countryName: _locationProvider.val!)
           .then((value) {
-        if(value.runtimeType == NewsListModel){
+        if (value.runtimeType == NewsListModel) {
           _newsListModel = value;
           addMoreArticlesToList(_newsListModel.articles);
           fetchingDone();
@@ -151,24 +127,15 @@ class NewsProvider with ChangeNotifier {
         return value;
       }, onError: (error) {
         if (kDebugMode) {
-          print(error.toString()+"Some LoadMoreNews");
+          print(error.toString() + "Some LoadMoreNews");
         }
         fetchingDone();
-        retryProvider.changeRetryPagination();
+        _retryProvider.changeRetryPagination();
         return error;
       });
     }
     return Future.value('We are having some issues while fetching data');
   }
-  void initializeArticlesList(List<Articles>? _articlesFromHome) {
-    resetCurrentPage();
-    _articles = [];
-    _articles = _articlesFromHome;
-    _totalArticlesInList = _articles!.length;
-    _currentPage++;
-    notifyListeners();
-  }
-
 
   Future<void> initConnectivity() async {
     late ConnectivityResult result;
@@ -177,15 +144,10 @@ class NewsProvider with ChangeNotifier {
     } on PlatformException {
       return;
     }
-
-    // if (!mounted) {
-    //   return Future.value(null);
-    // }
-
     return _updateConnectionStatus(result);
   }
 
-  void showScaffold() {
+  void showSnackBar() {
     internetWorking = false;
     ScaffoldMessenger.of(_context).showSnackBar(SnackBar(
       content: const Text('No Internet Connection'),
@@ -209,11 +171,11 @@ class NewsProvider with ChangeNotifier {
           ScaffoldMessenger.of(_context).clearSnackBars();
         }
       } on SocketException catch (_) {
-        showScaffold();
+        showSnackBar();
       }
     } else {
       ScaffoldMessenger.of(_context).clearSnackBars();
-      showScaffold();
+      showSnackBar();
     }
   }
 
@@ -234,19 +196,40 @@ class NewsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setTotalArticles(int? value) {
-    _totalArticles = value;
-    notifyListeners();
-  }
-
   void fetching() {
-    _fetchMore = true;
+    _fetchingMore = true;
     notifyListeners();
   }
 
   void fetchingDone() {
-    _fetchMore = false;
+    _fetchingMore = false;
     notifyListeners();
   }
 
+  Future showSelectLocationBottomSheet() {
+    return _bottomSheetMethods.showCustomBottomSheet(
+        context: _context,
+        childList: _selectLocationBottomSheetUI.showSelectLocationBottomSheet(),
+        heading: 'Choose your Location',
+        applyFilter: () {
+          Navigator.pop(_context);
+          _locationProvider.setCountry(countries[countries.indexWhere(
+                  (element) => element['val'] == _locationProvider.val!)]
+          ['location']!);
+          _categoryProvider.resetSelectedCategory();
+          future = getNews();
+        });
+  }
+
+  Future showSelectCategoryBottomSheet() {
+    return _bottomSheetMethods.showCustomBottomSheet(
+      heading: 'Filter by categories',
+      applyFilter: () {
+        Navigator.pop(_context);
+        future = getNews();
+      },
+      context: _context,
+      childList: _selectCategoryBottomSheetUI.showSelectCategoryBottomSheet(),
+    );
+  }
 }
