@@ -4,7 +4,7 @@ import 'package:news_feed/Providers/location_provider.dart';
 import 'Providers/search_provider.dart';
 import 'Providers/retry_provider.dart';
 import 'Views/home_page.dart';
-import 'Providers/newsProvider.dart';
+import 'Providers/news_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() {

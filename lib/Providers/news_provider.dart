@@ -3,10 +3,10 @@ import 'package:news_feed/Models/articles_model.dart';
 
 class NewsProvider with ChangeNotifier {
   late int? _totalArticles;
-  late int _currentPage=1;
-  late List<Articles>? _articles=[];
-  late int _totalArticlesInList=0;
-  late bool _fetchMore = false;
+  int _currentPage = 1;
+  List<Articles>? _articles = [];
+  int _totalArticlesInList = 0;
+  bool _fetchMore = false;
 
   int? get totalArticles => _totalArticles;
   int get currentPage => _currentPage;
@@ -18,24 +18,24 @@ class NewsProvider with ChangeNotifier {
     resetCurrentPage();
     _articles = [];
     _articles = _articlesFromHome;
-    _totalArticlesInList= _articles!.length;
-    _currentPage = 2;
+    _totalArticlesInList = _articles!.length;
+    _currentPage++;
     notifyListeners();
   }
 
-  void incrementCurrentPage(){
+  void incrementCurrentPage() {
     _currentPage++;
   }
 
-  void resetCurrentPage(){
-    _currentPage =1;
+  void resetCurrentPage() {
+    _currentPage = 1;
   }
 
   void addMoreArticlesToList(List<Articles>? _moreArticles) {
     _moreArticles?.forEach((element) {
       _articles?.add(element);
     });
-    _totalArticlesInList= _articles!.length;
+    _totalArticlesInList = _articles!.length;
     incrementCurrentPage();
     notifyListeners();
   }
@@ -45,11 +45,12 @@ class NewsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void fetching(){
+  void fetching() {
     _fetchMore = true;
     notifyListeners();
   }
-  void fetchingDone(){
+
+  void fetchingDone() {
     _fetchMore = false;
     notifyListeners();
   }

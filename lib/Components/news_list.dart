@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../Providers/newsProvider.dart';
+import '../Providers/news_provider.dart';
 import 'news_card.dart';
 
 class NewsList extends StatelessWidget {

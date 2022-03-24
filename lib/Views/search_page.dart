@@ -5,31 +5,17 @@ import 'package:news_feed/Models/articles_model.dart';
 import 'package:news_feed/Providers/search_provider.dart';
 import 'package:news_feed/Components/text_field_search.dart';
 import 'package:provider/provider.dart';
-import '../Providers/newsProvider.dart';
+import '../Providers/news_provider.dart';
 import '../Components/news_card.dart';
 import '../Components/center_text.dart';
 
-class SearchPage extends StatefulWidget {
-  const SearchPage({Key? key}) : super(key: key);
-
-  @override
-  State<SearchPage> createState() => _SearchPageState();
-}
-
-class _SearchPageState extends State<SearchPage> {
-  late final NewsProvider newsProvider;
-  late final SearchProvider searchProvider;
-  late int counter = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    newsProvider = Provider.of<NewsProvider>(context, listen: false);
-    searchProvider = Provider.of<SearchProvider>(context, listen: false);
-  }
+class SearchPage extends StatelessWidget {
+   const SearchPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final NewsProvider _newsProvider = Provider.of<NewsProvider>(context, listen: false);
+    final SearchProvider _searchProvider = Provider.of<SearchProvider>(context, listen: false);
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -56,7 +42,7 @@ class _SearchPageState extends State<SearchPage> {
                   autoFocus: true,
                   callback: (string) {
                     List<Articles>? filteredList =
-                        newsProvider.articles?.where((element) {
+                        _newsProvider.articles?.where((element) {
                       return ((element.content ?? "")
                               .toLowerCase()
                               .contains(string.toLowerCase()) ||
@@ -67,8 +53,10 @@ class _SearchPageState extends State<SearchPage> {
                               .toLowerCase()
                               .contains(string.toLowerCase()));
                     }).toList();
-                    counter = 1;
-                    searchProvider.fillSearchedArticles(filteredList!);
+                    if(_searchProvider.openedFirstTime){
+                      _searchProvider.setOpenedFirstTimeToFalse();
+                    }
+                    _searchProvider.fillSearchedArticles(filteredList!);
                   },
                 )),
             Consumer<SearchProvider>(
@@ -83,7 +71,7 @@ class _SearchPageState extends State<SearchPage> {
                                       searchProvider.getSearchedArticles[index],
                                 ))
                         : CenterText(
-                            text: counter < 1
+                            text: searchProvider.openedFirstTime == true
                                 ? 'We have plenty of news articles you can search from them'
                                 : 'OOPS! We have no item with this name'));
               },

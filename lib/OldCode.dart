@@ -137,7 +137,7 @@
 // import '../Components/location_button.dart';
 // import '../Services/news_api.dart';
 // import '../Models/news_list_model.dart';
-// import '../Providers/newsProvider.dart';
+// import '../Providers/news_provider.dart';
 // import '../Components/news_list.dart';
 // import 'package:connectivity_plus/connectivity_plus.dart';
 //
